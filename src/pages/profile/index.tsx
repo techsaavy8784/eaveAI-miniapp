@@ -207,11 +207,11 @@ export default function ProfilePage() {
       </CardWrapper>
 
       <div className="flex flex-1 w-full flex-col justify-end items-center p-2 gap-2.5">
-        <button className="w-full h-[50px] rounded-md bg-[#6174EC] text-white text-sm">
+        <button className="w-full h-[50px] rounded-md bg-[#6174EC] text-white text-sm font-semibold">
           Upgrad Plan
         </button>
-        <button className="w-full h-[50px] rounded-md bg-[#6174EC26] text-[#6174EC] text-sm">
-          Upgrad Plan
+        <button className="w-full h-[50px] rounded-md bg-[#6174EC26] text-[#6174EC] text-sm font-semibold">
+          Renew Plan
         </button>
       </div>
     </Page>
