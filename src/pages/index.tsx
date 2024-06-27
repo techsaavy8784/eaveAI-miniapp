@@ -1,16 +1,10 @@
-import { Page } from "@/components/Page/Page";
 import { Link } from "@/components/Link/Link";
-import { routes } from "@/navigation/routes";
-
-import styles from "./styles.module.css";
-
-import { useState, ReactNode, useEffect } from "react";
+import { useState, ReactNode, useEffect, useMemo } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import CardWrapper from "@/components/CardWrapper";
-// import Link from "next/link";
 
 const UserInfoCard = () => {
   return (
@@ -54,28 +48,7 @@ const SignalCard = ({
 
 export default function IndexPage() {
   return (
-    // <Page title="Home Page">
-    //   <p>
-    //     This page is a home page in this boilerplate. You can use the links below to visit other
-    //     pages with their own functionality.
-    //   </p>
-    //   <ul className={styles.links}>
-    //     {routes.map(({ path, title, icon }) => title && (
-    //       <li className={styles.linkItem} key={path}>
-    //         <Link className={styles.link} href={path}>
-    //           {icon && (
-    //             <i className={styles.linkIcon}>
-    //               {icon}
-    //             </i>
-    //           )}
-    //           {title}
-    //         </Link>
-    //       </li>
-    //     ))}
-    //   </ul>
-    // </Page>
-
-    <main className="flex w-full min-h-screen justify-center bg-background p-3  pb-[110px] ">
+    <main className="flex w-full min-h-screen justify-center bg-background p-3 pb-[110px] ">
       <div className="relative w-full flex flex-col items-center justify-between gap-4 animate-opacity-scale">
         <CardWrapper className="z-10">
           <UserInfoCard />
@@ -109,7 +82,7 @@ export default function IndexPage() {
           </Link>
           <Link href="/friends">
             <CardWrapper className="h-[66px] px-4 py-3 cursor-pointer">
-              <SignalCard title="Hosts tracked" amount="10" total="20">
+              <SignalCard title="Signals Used" amount="10" total="20">
                 <Avatar>
                   <AvatarImage src={"/images/signal.png"} />
                   <AvatarFallback>Host</AvatarFallback>
@@ -119,7 +92,6 @@ export default function IndexPage() {
           </Link>
         </div>
       </div>
-
       <Navbar />
     </main>
   );
