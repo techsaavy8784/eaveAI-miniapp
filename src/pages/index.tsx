@@ -50,8 +50,10 @@ export default function IndexPage() {
   return (
     <main className="flex w-full min-h-screen justify-center bg-background p-3 pb-[110px] ">
       <div className="relative w-full flex flex-col items-center justify-between gap-4 animate-opacity-scale">
-        <CardWrapper className="z-10">
-          <UserInfoCard />
+        <CardWrapper className="cursor-pointer z-10">
+          <Link href="/profile">
+            <UserInfoCard />
+          </Link>
         </CardWrapper>
         <Image
           className="-mt-16"
