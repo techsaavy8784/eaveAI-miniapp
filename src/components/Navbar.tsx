@@ -26,7 +26,7 @@ export const route: Route[] = [
     icon: (color: string) => <Icons.navigator.friends color={color} />,
   },
   {
-    path: "/init-data",
+    path: "/guilds",
     title: "Dashboard",
     icon: (color: string) => (
       <div className="flex flex-col items-center mt-3">
@@ -74,15 +74,15 @@ export const Navbar = () => {
   return (
     <div className="fixed bottom-0 w-full mx-auto h-[80px] flex justify-between px-2 gap-2 z-10 bg-[#181818]">
       {route.map((item, index) => {
-        // const isDisabled = index === route.length - 1;
+        const isDisabled = index === route.length - 1;
 
         return (
           <div
             key={index}
             onClick={() => {
-              // if (!isDisabled) {
-              router.push(item.path);
-              // }
+              if (!isDisabled) {
+                router.push(item.path);
+              }
             }}
             className={`flex flex-col flex-1 justify-center items-center p-2 gap-2 rounded-xl cursor-pointer transition-all duration-200 ease-linear ${
               active === index ? "text-[#6174EC]" : "bg-transparent text-white"
@@ -91,7 +91,7 @@ export const Navbar = () => {
             <div
               className={`w-16 rounded-full h-[30px] flex justify-center items-center ${
                 active === index ? "bg-[#2990FF26]" : "bg-transparent"
-              }`}
+              } ${isDisabled ? "pointer-events-none opacity-50" : ""}`}
             >
               {item.icon(active === index ? "#6174EC" : "#78797E")}
             </div>
