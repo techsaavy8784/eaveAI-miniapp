@@ -1,6 +1,7 @@
-import { type ReactNode, useMemo } from "react";
+import { type ReactNode, useMemo, JSX } from "react";
 import { useInitData, type User, useLaunchParams } from "@tma.js/sdk-react";
 import CardWrapper from "@/components/CardWrapper";
+import { truncateAddress } from "@/lib/utils";
 
 import {
   DisplayData,
@@ -13,6 +14,8 @@ import styles from "./styles.module.css";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PiWalletBold } from "react-icons/pi";
+import { CgCreditCard } from "react-icons/cg";
+import { LuCalendar } from "react-icons/lu";
 
 function getUserRows(user: User): DisplayDataRow[] {
   return [
@@ -28,6 +31,34 @@ function getUserRows(user: User): DisplayDataRow[] {
     { title: "added_to_attachment_menu", value: user.addedToAttachmentMenu },
   ];
 }
+
+type T_UserInforItem = {
+  icon: JSX.Element;
+  title: string;
+  value: string;
+  wallet?: boolean;
+};
+
+const UserInforItem: React.FC<T_UserInforItem> = ({
+  icon,
+  title,
+  value,
+  wallet,
+}) => {
+  return (
+    <div className="flex w-full justify-between">
+      <div className="flex items-center gap-1 text-white">
+        {icon}
+        <p className="text-[13px] leading-4">{title}</p>
+      </div>
+      <div className="w-28 flex justify-end items-center overflow-hidden">
+        <p className="text-white truncate text-[17px] leading-6">
+          {wallet ? truncateAddress(value) : value}
+        </p>
+      </div>
+    </div>
+  );
+};
 
 export default function ProfilePage() {
   const initData = useInitData(true);
@@ -130,16 +161,16 @@ export default function ProfilePage() {
 
   return (
     <Page
-      title="Init Data"
-      disclaimer={
-        <>
-          This page displays application{" "}
-          <Link href="https://docs.telegram-mini-apps.com/platform/init-data">
-            init data
-          </Link>
-          .
-        </>
-      }
+    // title="Init Data"
+    // disclaimer={
+    //   <>
+    //     This page displays application{" "}
+    //     <Link href="https://docs.telegram-mini-apps.com/platform/init-data">
+    //       init data
+    //     </Link>
+    //     .
+    //   </>
+    // }
     >
       {/* {contentNode} */}
       <CardWrapper className="flex h-[410px] flex-col gap-2 justify-between items-center bg-[#0F0F0F] pt-4">
@@ -147,23 +178,42 @@ export default function ProfilePage() {
           <AvatarImage src={"/images/avatar-lg.png"} />
           <AvatarFallback>Host</AvatarFallback>
         </Avatar>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 items-center">
           <span className="text-white text-sm font-semibold">@username</span>
           <p className="text-[#AAAAAA] text-xs">Basic Plan</p>
         </div>
-        <div className="flex flex-col gap-1">
-          <span className="text-white text-sm font-semibold">@username</span>
-          <p className="text-[#AAAAAA] text-xs">Basic Plan</p>
-        </div>
-        <div className="flex flex-col gap-1">
-          <span className="text-white text-sm font-semibold">@username</span>
-          <p className="text-[#AAAAAA] text-xs">Basic Plan</p>
-        </div>
-        <div className="flex flex-col gap-1">
-          <span className="text-white text-sm font-semibold">@username</span>
-          <p className="text-[#AAAAAA] text-xs">Basic Plan</p>
-        </div>
+        <CardWrapper className="bg-background h-[60px]">
+          <UserInforItem
+            icon={<PiWalletBold className="w-6 h-6 stroke-1" />}
+            title="Connected Wallet"
+            value="0x3d83jdv823xjnq92730xs2bed35q2"
+            wallet={true}
+          />
+        </CardWrapper>
+        <CardWrapper className="bg-background h-[60px]">
+          <UserInforItem
+            icon={<CgCreditCard className="w-6 h-6 stroke-1" />}
+            title="Payment Method"
+            value="ETH"
+          />
+        </CardWrapper>
+        <CardWrapper className="bg-background h-[60px]">
+          <UserInforItem
+            icon={<LuCalendar className="w-6 h-6 stroke-2" />}
+            title="Subscription Ending"
+            value="2024-12-31"
+          />
+        </CardWrapper>
       </CardWrapper>
+
+      <div className="flex flex-1 w-full flex-col justify-end items-center p-2 gap-2.5">
+        <button className="w-full h-[50px] rounded-md bg-[#6174EC] text-white text-sm">
+          Upgrad Plan
+        </button>
+        <button className="w-full h-[50px] rounded-md bg-[#6174EC26] text-[#6174EC] text-sm">
+          Upgrad Plan
+        </button>
+      </div>
     </Page>
   );
 }
