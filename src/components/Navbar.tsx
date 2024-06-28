@@ -99,7 +99,7 @@ export const Navbar = () => {
             } `}
           >
             <div
-              className={`w-16 rounded-full h-[30px] flex justify-center items-center ${
+              className={`w-full rounded-full h-[30px] flex justify-center items-center ${
                 active === index ? "bg-[#2990FF26]" : "bg-transparent"
               } ${isDisabled ? "pointer-events-none opacity-50" : ""}`}
             >
