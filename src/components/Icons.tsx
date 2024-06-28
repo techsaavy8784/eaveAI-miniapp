@@ -1,4 +1,5 @@
 import { LucideProps } from "lucide-react";
+import { CgProfile } from "react-icons/cg";
 
 export const Icons = {
   navigator: {
@@ -51,6 +52,9 @@ export const Icons = {
           strokeLinejoin="round"
         />
       </svg>
+    ),
+    profile: (props: LucideProps) => (
+      <CgProfile className={`w-6 h-6 text-[${props.color}]`} />
     ),
     guilds: (props: LucideProps) => (
       <svg

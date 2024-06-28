@@ -26,6 +26,11 @@ export const route: Route[] = [
     icon: (color: string) => <Icons.navigator.friends color={color} />,
   },
   {
+    path: "/profile",
+    title: "Profile",
+    icon: (color: string) => <Icons.navigator.profile color={color} />,
+  },
+  {
     path: "/guilds",
     title: "Dashboard",
     icon: (color: string) => (
@@ -59,8 +64,11 @@ export const Navbar = () => {
       case "/friends":
         setActive(2);
         break;
-      case "/guilds":
+      case "/profile":
         setActive(3);
+        break;
+      case "/guilds":
+        setActive(4);
         break;
       default:
         setActive(-1);
@@ -75,6 +83,8 @@ export const Navbar = () => {
     <div className="fixed bottom-0 w-full mx-auto h-[80px] flex justify-between px-2 gap-2 z-10 bg-[#181818]">
       {route.map((item, index) => {
         const isDisabled = index === route.length - 1;
+
+        console.log(`Rendering item: ${item.title}, Disabled: ${isDisabled}`);
 
         return (
           <div
