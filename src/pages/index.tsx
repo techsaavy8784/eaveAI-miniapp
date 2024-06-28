@@ -44,7 +44,7 @@ const SignalCard = ({
   children,
 }: {
   title: string;
-  total: string;
+  total: string | undefined;
   amount: string;
   children: ReactNode;
 }) => {
@@ -117,7 +117,7 @@ export default function IndexPage() {
 
   return (
     <main className="flex w-full min-h-screen justify-center bg-background p-3 pb-[100px] ">
-      <div className="relative w-full max-h-dvh flex flex-col items-center justify-between gap-4 animate-opacity-scale">
+      <div className="relative w-full flex flex-col items-center justify-between gap-4 animate-opacity-scale">
         {/* <CardWrapper className="cursor-pointer z-10">
           <Link className="w-full" href="/profile">
             <UserInfoCard />
@@ -144,7 +144,11 @@ export default function IndexPage() {
         <div className="w-full flex flex-col gap-[10px]">
           <Link href="/tasks">
             <CardWrapper className="h-[66px] px-4 py-3 cursor-pointer">
-              <SignalCard title="Hosts tracked" amount="5" total="10">
+              <SignalCard
+                title="Hosts tracked"
+                amount="5"
+                total={hostTrack?.toString() ?? "N/A"}
+              >
                 <Avatar>
                   <AvatarImage src={"/images/host.png"} />
                   <AvatarFallback>Host</AvatarFallback>

@@ -103,7 +103,7 @@ export default function ProfilePage() {
         </Avatar>
         <div className="flex flex-col gap-1 items-center">
           <span className="text-white text-sm font-semibold">@{username}</span>
-          <p className="text-[#AAAAAA] text-xs">Basic Plan</p>
+          <p className="text-[#AAAAAA] text-xs">{userData?.plan ?? "N/A"}</p>
         </div>
         <CardWrapper className="bg-background h-[60px]">
           <UserInforItem
