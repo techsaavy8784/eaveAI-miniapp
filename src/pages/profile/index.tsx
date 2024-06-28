@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo, JSX } from "react";
+import { type ReactNode, useMemo, JSX, useState, useEffect } from "react";
 import { useInitData, type User, useLaunchParams } from "@tma.js/sdk-react";
 import CardWrapper from "@/components/CardWrapper";
 import { truncateAddress } from "@/lib/utils";
@@ -16,6 +16,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PiWalletBold } from "react-icons/pi";
 import { CgCreditCard } from "react-icons/cg";
 import { LuCalendar } from "react-icons/lu";
+import useUserStore from "@/store/useStore";
+import api from "@/lib/api";
 
 function getUserRows(user: User): DisplayDataRow[] {
   return [
@@ -35,7 +37,7 @@ function getUserRows(user: User): DisplayDataRow[] {
 type T_UserInforItem = {
   icon: JSX.Element;
   title: string;
-  value: string;
+  value: string | undefined;
   wallet?: boolean;
 };
 
@@ -53,111 +55,47 @@ const UserInforItem: React.FC<T_UserInforItem> = ({
       </div>
       <div className="w-28 flex justify-end items-center overflow-hidden">
         <p className="text-white truncate text-[17px] leading-6">
-          {wallet ? truncateAddress(value) : value}
+          {wallet ? truncateAddress(value ?? "") : value}
         </p>
       </div>
     </div>
   );
 };
 
+type T_UserData = {
+  id: number;
+  telegram_entity_id: string;
+  telegram_username: string;
+  wallet_address: string | null;
+  encrypted_private_key: string | null;
+  subscription_end: string | null;
+  notifications_enabled: boolean;
+  plan: string | null;
+};
+
 export default function ProfilePage() {
-  const initData = useInitData(true);
-  const initDataRaw = useLaunchParams(true)?.initDataRaw;
+  const [userData, setUserData] = useState<T_UserData>();
 
-  const initDataRows = useMemo<DisplayDataRow[] | undefined>(() => {
-    if (!initData || !initDataRaw) {
-      return;
-    }
-    const {
-      hash,
-      queryId,
-      chatType,
-      chatInstance,
-      authDate,
-      startParam,
-      canSendAfter,
-      canSendAfterDate,
-    } = initData;
-    return [
-      { title: "raw", value: initDataRaw },
-      { title: "auth_date", value: authDate.toLocaleString() },
-      { title: "auth_date (raw)", value: authDate.getTime() / 1000 },
-      { title: "hash", value: hash },
-      { title: "can_send_after", value: canSendAfterDate?.toISOString() },
-      { title: "can_send_after (raw)", value: canSendAfter },
-      { title: "query_id", value: queryId },
-      { title: "start_param", value: startParam },
-      { title: "chat_type", value: chatType },
-      { title: "chat_instance", value: chatInstance },
-    ];
-  }, [initData, initDataRaw]);
+  const { userId, username } = useUserStore((state: any) => ({
+    userId: state.userId,
+    username: state.username,
+  }));
 
-  const userRows = useMemo<DisplayDataRow[] | undefined>(() => {
-    return initData && initData.user ? getUserRows(initData.user) : undefined;
-  }, [initData]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get(
+          `/get_by_telegram_entity_id/?telegram_entity_id=${userId}`
+        );
 
-  const receiverRows = useMemo<DisplayDataRow[] | undefined>(() => {
-    return initData && initData.receiver
-      ? getUserRows(initData.receiver)
-      : undefined;
-  }, [initData]);
+        setUserData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-  const chatRows = useMemo<DisplayDataRow[] | undefined>(() => {
-    if (!initData?.chat) {
-      return;
-    }
-    const { id, title, type, username, photoUrl } = initData.chat;
-
-    return [
-      { title: "id", value: id.toString() },
-      { title: "title", value: title },
-      { title: "type", value: type },
-      { title: "username", value: username },
-      { title: "photo_url", value: photoUrl },
-    ];
-  }, [initData]);
-
-  let contentNode: ReactNode;
-
-  if (!initDataRows) {
-    contentNode = <i>Application was launched with missing init data</i>;
-  } else {
-    contentNode = (
-      <>
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Init data</h2>
-          <DisplayData rows={initDataRows} />
-        </div>
-
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>User</h2>
-          {userRows ? (
-            <DisplayData rows={userRows} />
-          ) : (
-            <i>User information missing</i>
-          )}
-        </div>
-
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Receiver</h2>
-          {receiverRows ? (
-            <DisplayData rows={receiverRows} />
-          ) : (
-            <i>Receiver information missing</i>
-          )}
-        </div>
-
-        <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>Chat</h2>
-          {chatRows ? (
-            <DisplayData rows={chatRows} />
-          ) : (
-            <i>Chat information missing</i>
-          )}
-        </div>
-      </>
-    );
-  }
+    fetchData();
+  }, []);
 
   return (
     <Page
@@ -179,14 +117,14 @@ export default function ProfilePage() {
           <AvatarFallback>Host</AvatarFallback>
         </Avatar>
         <div className="flex flex-col gap-1 items-center">
-          <span className="text-white text-sm font-semibold">@username</span>
+          <span className="text-white text-sm font-semibold">@{username}</span>
           <p className="text-[#AAAAAA] text-xs">Basic Plan</p>
         </div>
         <CardWrapper className="bg-background h-[60px]">
           <UserInforItem
             icon={<PiWalletBold className="w-6 h-6 stroke-1" />}
             title="Connected Wallet"
-            value="0x3d83jdv823xjnq92730xs2bed35q2"
+            value={userData?.wallet_address ?? "N/A"}
             wallet={true}
           />
         </CardWrapper>
@@ -201,7 +139,7 @@ export default function ProfilePage() {
           <UserInforItem
             icon={<LuCalendar className="w-6 h-6 stroke-2" />}
             title="Subscription Ending"
-            value="2024-12-31"
+            value={userData?.subscription_end ?? "N/A"}
           />
         </CardWrapper>
       </CardWrapper>
