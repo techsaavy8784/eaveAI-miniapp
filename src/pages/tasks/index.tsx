@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useUserStore from "@/store/useStore";
 import api from "@/lib/api";
+import { FadeLoader } from "react-spinners";
 
 const SignalInfoCard = ({
   title,
@@ -46,6 +47,7 @@ type T_TrackData = {
 
 export default function FriendsPage() {
   const [trackData, setTrackData] = useState<T_TrackData[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { userId, username } = useUserStore((state: any) => ({
     userId: state.userId,
@@ -55,9 +57,11 @@ export default function FriendsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await api.get("/api/creators/");
 
         setTrackData(response.data?.results || []);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -83,21 +87,32 @@ export default function FriendsPage() {
           <div className="w-full mt-6 mb-7 h-[1px] bg-[#FFFFFF1A]"></div>
         </div>
         <div className="w-full flex flex-col gap-[10px]">
-          {trackData?.map((track: any, index: number) => {
-            return (
-              <CardWrapper key={index} className="h-[54px]">
-                <SignalInfoCard
-                  title={"@" + track?.twitter_username}
-                  subTitle={track?.twitter_description}
-                >
-                  <Avatar>
-                    <AvatarImage src={track?.twitter_profile_image_url} />
-                    <AvatarFallback>Host</AvatarFallback>
-                  </Avatar>
-                </SignalInfoCard>
-              </CardWrapper>
-            );
-          })}
+          {isLoading ? (
+            <div className="w-full flex justify-center my-10">
+              <FadeLoader
+                loading={isLoading}
+                color="#6174ec"
+                height={20}
+                width={6}
+              />
+            </div>
+          ) : (
+            trackData?.map((track: any, index: number) => {
+              return (
+                <CardWrapper key={index} className="h-[54px]">
+                  <SignalInfoCard
+                    title={"@" + track?.twitter_username}
+                    subTitle={track?.twitter_description}
+                  >
+                    <Avatar>
+                      <AvatarImage src={track?.twitter_profile_image_url} />
+                      <AvatarFallback>Host</AvatarFallback>
+                    </Avatar>
+                  </SignalInfoCard>
+                </CardWrapper>
+              );
+            })
+          )}
           <CardWrapper className="h-[54px] bg-[#6174EC33]">
             <SignalInfoCard title="Add Host" icon>
               <Avatar>
