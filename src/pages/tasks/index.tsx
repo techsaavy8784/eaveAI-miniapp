@@ -57,7 +57,7 @@ export default function FriendsPage() {
       try {
         const response = await api.get("/api/creators/");
 
-        setTrackData(response.data?.result || []);
+        setTrackData(response.data?.results || []);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
