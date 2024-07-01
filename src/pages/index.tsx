@@ -123,8 +123,6 @@ export default function IndexPage() {
             <UserInfoCard />
           </Link>
         </CardWrapper> */}
-        <div>{initData?.user?.id}</div>
-        <div>{initData?.user?.username}</div>
         <Image
           className=""
           width={350}
