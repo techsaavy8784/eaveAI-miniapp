@@ -86,7 +86,7 @@ export default function FriendsPage() {
           <p className="text-[#AAAAAA] text-xs">Hosts Tracked: 2/10</p>
           <div className="w-full mt-6 mb-7 h-[1px] bg-[#FFFFFF1A]"></div>
         </div>
-        <div className="w-full flex flex-col gap-[10px]">
+        <div className="w-full flex flex-col gap-[10px] animate-opacity-scale">
           {isLoading ? (
             <div className="w-full flex justify-center my-10">
               <FadeLoader
