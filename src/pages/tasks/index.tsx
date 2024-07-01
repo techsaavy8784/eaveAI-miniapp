@@ -30,8 +30,22 @@ const SignalInfoCard = ({
   );
 };
 
+type T_TrackData = {
+  id: number;
+  twitter_id: string;
+  twitter_username: string;
+  twitter_profile_image_url: string;
+  twitter_verified: boolean;
+  twitter_verified_type: string;
+  twitter_name: string;
+  twitter_location: string | null;
+  twitter_description: string;
+  twitter_created_at: string;
+  last_updated: string;
+};
+
 export default function FriendsPage() {
-  const [trackData, setTrackData] = useState<any>([]);
+  const [trackData, setTrackData] = useState<T_TrackData[]>([]);
 
   const { userId, username } = useUserStore((state: any) => ({
     userId: state.userId,
@@ -43,7 +57,7 @@ export default function FriendsPage() {
       try {
         const response = await api.get("/api/creators/");
 
-        setTrackData(response.data?.result);
+        setTrackData(response.data?.result || []);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -69,7 +83,7 @@ export default function FriendsPage() {
           <div className="w-full mt-6 mb-7 h-[1px] bg-[#FFFFFF1A]"></div>
         </div>
         <div className="w-full flex flex-col gap-[10px]">
-          {trackData.map((track: any, index: number) => {
+          {trackData?.map((track: any, index: number) => {
             return (
               <CardWrapper key={index} className="h-[54px]">
                 <SignalInfoCard
