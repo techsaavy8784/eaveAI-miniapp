@@ -84,8 +84,6 @@ export const Navbar = () => {
       {route.map((item, index) => {
         const isDisabled = index === route.length - 1;
 
-        console.log(`Rendering item: ${item.title}, Disabled: ${isDisabled}`);
-
         return (
           <div
             key={index}
