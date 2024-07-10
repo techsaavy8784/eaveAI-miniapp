@@ -5,14 +5,11 @@ import Image from "next/image";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import CardWrapper from "@/components/CardWrapper";
 
-import { type ReactNode, useMemo, JSX, useState, useEffect } from "react";
+import { type ReactNode, JSX, useState, useEffect } from "react";
 import { useInitData, type User, useLaunchParams } from "@tma.js/sdk-react";
-import {
-  DisplayData,
-  type DisplayDataRow,
-} from "@/components/DisplayData/DisplayData";
 import useUserStore from "@/store/useStore";
 import api from "@/lib/api";
+import { FadeLoader } from "react-spinners";
 
 type T_UserInforItem = {
   icon: JSX.Element;
@@ -52,7 +49,7 @@ const SignalCard = ({
     <div className="w-full flex justify-between items-center gap-3 text-white">
       {children}
       <div className="flex flex-col flex-1 justify-center items-start gap-1">
-        <span className="text-white  text-sm">{title}</span>
+        <span className="text-white text-sm">{title}</span>
       </div>
       <p className="text-sm">
         {amount}/{total}
@@ -66,34 +63,8 @@ export default function IndexPage() {
   const initDataRaw = useLaunchParams(true)?.initDataRaw;
   const setUserData = useUserStore((state: any) => state.setUserData);
   const [hostTrack, setHostTrack] = useState<number>();
-
-  const initDataRows = useMemo<DisplayDataRow[] | undefined>(() => {
-    if (!initData || !initDataRaw) {
-      return;
-    }
-    const {
-      hash,
-      queryId,
-      chatType,
-      chatInstance,
-      authDate,
-      startParam,
-      canSendAfter,
-      canSendAfterDate,
-    } = initData;
-    return [
-      { title: "raw", value: initDataRaw },
-      { title: "auth_date", value: authDate.toLocaleString() },
-      { title: "auth_date (raw)", value: authDate.getTime() / 1000 },
-      { title: "hash", value: hash },
-      { title: "can_send_after", value: canSendAfterDate?.toISOString() },
-      { title: "can_send_after (raw)", value: canSendAfter },
-      { title: "query_id", value: queryId },
-      { title: "start_param", value: startParam },
-      { title: "chat_type", value: chatType },
-      { title: "chat_instance", value: chatInstance },
-    ];
-  }, [initData, initDataRaw]);
+  const [followedHost, setFollowedHost] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (initData?.user?.id && initData?.user?.username) {
@@ -103,26 +74,33 @@ export default function IndexPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
         const response = await api.get("/api/creators/");
+        const response1 = await api.get(
+          `api/accounts/${initData?.user?.id}/follows/`
+        );
 
         setHostTrack(response.data?.count);
+        setFollowedHost(response1.data?.count);
+        setIsLoading(false);
       } catch (error) {
+        setIsLoading(false);
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [initData]);
 
   return (
     <main className="flex w-full min-h-screen justify-center bg-background p-3 pb-[100px] ">
+      {isLoading && (
+        <div className="fixed w-full min-h-screen flex justify-center items-center top-0 left-0 z-50 bg-black/70">
+          <FadeLoader color="#6174ec" height={20} width={6} />
+        </div>
+      )}
       <div className="relative w-full flex flex-col items-center justify-between gap-4 animate-opacity-scale">
-        {/* <CardWrapper className="cursor-pointer z-10">
-          <Link className="w-full" href="/profile">
-            <UserInfoCard />
-          </Link>
-        </CardWrapper> */}
         <Image
           className=""
           width={350}
@@ -144,8 +122,8 @@ export default function IndexPage() {
             <CardWrapper className="h-[66px] px-4 py-3 cursor-pointer">
               <SignalCard
                 title="Hosts tracked"
-                amount="5"
-                total={hostTrack?.toString() ?? "N/A"}
+                amount={followedHost?.toString() ?? "0"}
+                total={hostTrack?.toString() ?? "0"}
               >
                 <Avatar>
                   <AvatarImage src={"/images/host.png"} />

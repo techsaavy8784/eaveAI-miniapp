@@ -1,13 +1,14 @@
 import { ReactNode, useEffect, useState } from "react";
-import { Navbar } from "@/components/Navbar";
 import { TbDotsVertical } from "react-icons/tb";
 import CardWrapper from "@/components/CardWrapper";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import useUserStore from "@/store/useStore";
-import api from "@/lib/api";
 import { FadeLoader } from "react-spinners";
-import { Link } from "@/components/Link/Link";
+import { Page } from "@/components/Page/Page";
+import { GoSearch } from "react-icons/go";
+import useUserStore from "@/store/useStore";
+import { Input } from "@/components/ui/input";
+import api from "@/lib/api";
 
 const SignalInfoCard = ({
   id,
@@ -60,11 +61,12 @@ type T_TrackData = {
   last_updated: string;
 };
 
-export default function FriendsPage() {
+export default function ProfilePage() {
   const [trackData, setTrackData] = useState<T_TrackData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hostTrack, setHostTrack] = useState<number>(0);
   const [followedHost, setFollowedHost] = useState<number>(0);
+  const [search, setSearch] = useState<string>("");
 
   const { userId, username } = useUserStore((state: any) => ({
     userId: state.userId,
@@ -92,28 +94,33 @@ export default function FriendsPage() {
   }, []);
 
   return (
-    <div className="flex w-full min-h-screen justify-center bg-background p-3 pb-[100px] ">
-      {isLoading && (
-        <div className="fixed w-full min-h-screen flex justify-center items-center top-0 left-0 z-50 bg-black/70">
+    <Page className="justify-start">
+      {/* {isLoading && (
+        <div className="fixed w-full h-screen flex justify-center items-center top-0 left-0 z-50 bg-black/70">
           <FadeLoader color="#6174ec" height={20} width={6} />
         </div>
-      )}
+      )} */}
       <div className="relative w-full flex flex-col items-center justify-start animate-opacity-scale">
         <div className="w-full flex flex-col items-center gap-2">
-          <Image
-            width={88}
-            height={88}
-            src={"/images/tracking-avatar.png"}
-            alt="Plan"
-          />
-          <span className="text-white text-sm font-semibold -mt-4">
-            Plan: Basic
-          </span>
+          <span className="text-xl font-semibold text-white">Add new host</span>
+          <span className="text-white text-sm font-semibold mt-2">Plan: Basic</span>
           <p className="text-[#AAAAAA] text-xs">
             Hosts Tracked: {hostTrack + "/" + followedHost}
           </p>
           <div className="w-full mt-6 mb-7 h-[1px] bg-[#FFFFFF1A]"></div>
         </div>
+        <div className="relative w-full">
+          <Input
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+            className="bg-transparent border border-[#AAAAAA] h-11 text-border text-sm placeholder:text-[#AAAAAA] placeholder:text-sm"
+            placeholder="Enter a guild @name to search"
+          />
+          <GoSearch className="absolute right-3 top-3 w-5 h-5 text-border" />
+        </div>
+
         <div className="w-full flex flex-col gap-[10px] animate-opacity-scale">
           {trackData?.map((track: any, index: number) => {
             return (
@@ -131,19 +138,8 @@ export default function FriendsPage() {
               </CardWrapper>
             );
           })}
-          <CardWrapper className="h-[54px] bg-[#6174EC33]">
-            <Link href="/add-host">
-              <SignalInfoCard title="Add Host" icon>
-                <Avatar>
-                  <AvatarImage src={"/images/add-button.png"} />
-                  <AvatarFallback>Host</AvatarFallback>
-                </Avatar>
-              </SignalInfoCard>
-            </Link>
-          </CardWrapper>
         </div>
       </div>
-      <Navbar />
-    </div>
+    </Page>
   );
 }

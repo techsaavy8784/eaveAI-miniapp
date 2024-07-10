@@ -10,14 +10,19 @@ import {
 import { Link } from "@/components/Link/Link";
 import { Page } from "@/components/Page/Page";
 
-import styles from "./styles.module.css";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PiWalletBold } from "react-icons/pi";
 import { CgCreditCard } from "react-icons/cg";
 import { LuCalendar } from "react-icons/lu";
 import useUserStore from "@/store/useStore";
 import api from "@/lib/api";
+import {
+  fetchUserData,
+  fetchHostsData,
+  fetchLiveSpaces,
+  fetchTrackingData,
+  fetchCreatorSpaces,
+} from "@/lib/dataFetches";
 
 type T_UserInforItem = {
   icon: JSX.Element;
@@ -58,29 +63,51 @@ type T_UserData = {
   plan: string | null;
 };
 
-export default function ProfilePage() {
-  const [userData, setUserData] = useState<T_UserData>();
+interface Space {
+  id: number;
+  title: string;
+  space_id: string;
+  creator_id: string;
+  creator: {
+    twitter_username: string;
+    twitter_id: string;
+    twitter_profile_image_url: string;
+    id: number;
+    twitter_name: string;
+  };
+}
+
+export default async function ProfilePage() {
+  // const [userData, setUserData] = useState<T_UserData>();
 
   const { userId, username } = useUserStore((state: any) => ({
     userId: state.userId,
     username: state.username,
   }));
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get(
-          `/get_by_telegram_entity_id/?telegram_entity_id=${userId}`
-        );
+  const userData = await fetchUserData(userId);
+  const spaces: Space[] = await fetchLiveSpaces();
+  const trackingData = await fetchTrackingData(userId);
 
-        setUserData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  console.log(userData);
+  console.log(spaces);
+  console.log(trackingData);
 
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await api.get(
+  //         `/get_by_telegram_entity_id/?telegram_entity_id=${userId}`
+  //       );
+
+  //       setUserData(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
 
   return (
     <Page

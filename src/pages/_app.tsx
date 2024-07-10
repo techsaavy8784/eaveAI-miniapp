@@ -73,8 +73,13 @@ const App: FC<AppProps> = ({ pageProps, Component }) => {
   }, [themeParams]);
 
   useEffect(() => {
-    return viewport && bindViewportCSSVars(viewport);
+    return viewport?.expand() && bindViewportCSSVars(viewport);
   }, [viewport]);
+
+  if (!viewport?.isExpanded) {
+    viewport?.expand();
+  }
+
 
   return (
     <>
