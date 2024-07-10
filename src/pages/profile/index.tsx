@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useUserStore } from "@/store/useStore";
+import useUserStore from "@/store/useStore";
 import CardWrapper from "@/components/CardWrapper";
 import { truncateAddress } from "@/lib/utils";
 import { DisplayData } from "@/components/DisplayData/DisplayData";
