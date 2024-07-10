@@ -1,27 +1,18 @@
-import { type ReactNode, useMemo, JSX, useState, useEffect } from "react";
-import { useInitData, type User, useLaunchParams } from "@tma.js/sdk-react";
+import { useState, useEffect } from "react";
+import { useUserStore } from "@/store/useStore";
 import CardWrapper from "@/components/CardWrapper";
 import { truncateAddress } from "@/lib/utils";
-
-import {
-  DisplayData,
-  type DisplayDataRow,
-} from "@/components/DisplayData/DisplayData";
+import { DisplayData } from "@/components/DisplayData/DisplayData";
 import { Link } from "@/components/Link/Link";
 import { Page } from "@/components/Page/Page";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PiWalletBold } from "react-icons/pi";
 import { CgCreditCard } from "react-icons/cg";
 import { LuCalendar } from "react-icons/lu";
-import useUserStore from "@/store/useStore";
-import api from "@/lib/api";
 import {
   fetchUserData,
-  fetchHostsData,
   fetchLiveSpaces,
   fetchTrackingData,
-  fetchCreatorSpaces,
 } from "@/lib/dataFetches";
 
 type T_UserInforItem = {
@@ -77,53 +68,48 @@ interface Space {
   };
 }
 
-export default async function ProfilePage() {
-  // const [userData, setUserData] = useState<T_UserData>();
+const ProfilePage: React.FC = () => {
+  const [userData, setUserData] = useState<any | null>(null);
+  const [spaces, setSpaces] = useState<Space[]>([]);
+  const [trackingData, setTrackingData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   const { userId, username } = useUserStore((state: any) => ({
     userId: state.userId,
     username: state.username,
   }));
 
-  const userData = await fetchUserData(userId);
-  const spaces: Space[] = await fetchLiveSpaces();
-  const trackingData = await fetchTrackingData(userId);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [user, liveSpaces, tracking] = await Promise.all([
+          fetchUserData(userId),
+          fetchLiveSpaces(),
+          fetchTrackingData(userId),
+        ]);
+        setUserData(user);
+        setSpaces(liveSpaces);
+        setTrackingData(tracking);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  
+    fetchData();
+  }, [userId]);
+
   console.log(userData);
   console.log(spaces);
   console.log(trackingData);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await api.get(
-  //         `/get_by_telegram_entity_id/?telegram_entity_id=${userId}`
-  //       );
-
-  //       setUserData(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
-    <Page
-    // title="Init Data"
-    // disclaimer={
-    //   <>
-    //     This page displays application{" "}
-    //     <Link href="https://docs.telegram-mini-apps.com/platform/init-data">
-    //       init data
-    //     </Link>
-    //     .
-    //   </>
-    // }
-    >
-      {/* {contentNode} */}
+    <Page>
       <CardWrapper className="flex h-[410px] flex-col gap-2 justify-between items-center bg-[#0F0F0F] pt-4">
         <Avatar className="w-[113px] h-[113px]">
           <AvatarImage src={"/images/avatar-lg.png"} />
@@ -159,7 +145,7 @@ export default async function ProfilePage() {
 
       <div className="flex flex-1 w-full flex-col justify-end items-center p-2 gap-2.5">
         <button className="w-full h-[50px] rounded-md bg-[#6174EC] text-white text-sm font-semibold">
-          Upgrad Plan
+          Upgrade Plan
         </button>
         <button className="w-full h-[50px] rounded-md bg-[#6174EC26] text-[#6174EC] text-sm font-semibold">
           Renew Plan
@@ -167,4 +153,6 @@ export default async function ProfilePage() {
       </div>
     </Page>
   );
-}
+};
+
+export default ProfilePage;
