@@ -89,6 +89,7 @@ export default async function ProfilePage() {
   const spaces: Space[] = await fetchLiveSpaces();
   const trackingData = await fetchTrackingData(userId);
 
+  
   console.log(userData);
   console.log(spaces);
   console.log(trackingData);
