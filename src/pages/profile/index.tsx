@@ -2,18 +2,12 @@ import { useState, useEffect } from "react";
 import useUserStore from "@/store/useStore";
 import CardWrapper from "@/components/CardWrapper";
 import { truncateAddress } from "@/lib/utils";
-import { DisplayData } from "@/components/DisplayData/DisplayData";
-import { Link } from "@/components/Link/Link";
 import { Page } from "@/components/Page/Page";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PiWalletBold } from "react-icons/pi";
 import { CgCreditCard } from "react-icons/cg";
 import { LuCalendar } from "react-icons/lu";
-import {
-  fetchUserData,
-  fetchLiveSpaces,
-  fetchTrackingData,
-} from "@/lib/dataFetches";
+import { fetchUserData } from "@/lib/dataFetches";
 import { FadeLoader } from "react-spinners";
 
 type T_UserInforItem = {
@@ -42,17 +36,6 @@ const UserInforItem: React.FC<T_UserInforItem> = ({
       </div>
     </div>
   );
-};
-
-type T_UserData = {
-  id: number;
-  telegram_entity_id: string;
-  telegram_username: string;
-  wallet_address: string | null;
-  encrypted_private_key: string | null;
-  subscription_end: string | null;
-  notifications_enabled: boolean;
-  plan: string | null;
 };
 
 interface Space {

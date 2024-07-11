@@ -1,14 +1,12 @@
+import { type ReactNode, JSX, useState, useEffect } from "react";
 import { Link } from "@/components/Link/Link";
 import { Navbar } from "@/components/Navbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import CardWrapper from "@/components/CardWrapper";
-
-import { type ReactNode, JSX, useState, useEffect } from "react";
 import { useInitData, type User, useLaunchParams } from "@tma.js/sdk-react";
 import useUserStore from "@/store/useStore";
-import api from "@/lib/api";
 import { FadeLoader } from "react-spinners";
 import { fetchUserData } from "@/lib/dataFetches";
 
@@ -17,22 +15,6 @@ type T_UserInforItem = {
   title: string;
   value: string;
   wallet?: boolean;
-};
-
-const UserInfoCard = () => {
-  return (
-    <div className="w-full flex justify-between items-center gap-[10px]">
-      <Avatar>
-        <AvatarImage src={"/images/Avatar.png"} />
-        <AvatarFallback>Host</AvatarFallback>
-      </Avatar>
-      <div className="flex flex-1 flex-col gap-1 text-sm">
-        <p className="text-white font-semibold">@username</p>
-        <p className="text-[#AAAAAA]">Basic Plan (Ends on 2024-12-31)</p>
-      </div>
-      <MdOutlineKeyboardArrowRight className="w-6 h-6 text-[#78797E]" />
-    </div>
-  );
 };
 
 const SignalCard = ({
@@ -61,10 +43,7 @@ const SignalCard = ({
 
 export default function IndexPage() {
   const initData = useInitData(true);
-  const initDataRaw = useLaunchParams(true)?.initDataRaw;
   const setUserData = useUserStore((state: any) => state.setUserData);
-  const [hostTrack, setHostTrack] = useState<number>();
-  const [followedHost, setFollowedHost] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [trackingData, setTrackingData] = useState<any | null>(null);
 
