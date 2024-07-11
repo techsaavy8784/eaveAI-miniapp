@@ -1,8 +1,4 @@
-export async function fetchUserData(telegramEntityId: number) {
-  if (!telegramEntityId) {
-    throw new Error("Telegram entity ID not found in cookies");
-  }
-
+export async function fetchUserData(telegramEntityId: number | undefined) {
   const url = `https://api-eave-dev.azurewebsites.net/api/accounts/get_by_telegram_entity_id/?telegram_entity_id=${telegramEntityId}`;
 
   const apiResponse = await fetch(url, {
@@ -21,11 +17,7 @@ export async function fetchUserData(telegramEntityId: number) {
   return result;
 }
 
-export async function fetchTrackingData(telegramEntityId: number) {
-  if (!telegramEntityId) {
-    throw new Error("Telegram entity ID not found in cookies");
-  }
-
+export async function fetchTrackingData(telegramEntityId: number | undefined) {
   const url = `https://api-eave-dev.azurewebsites.net/api/accounts/${telegramEntityId}/follows/`;
 
   const apiResponse = await fetch(url, {

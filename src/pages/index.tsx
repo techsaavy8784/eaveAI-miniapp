@@ -10,6 +10,7 @@ import { useInitData, type User, useLaunchParams } from "@tma.js/sdk-react";
 import useUserStore from "@/store/useStore";
 import api from "@/lib/api";
 import { FadeLoader } from "react-spinners";
+import { fetchUserData } from "@/lib/dataFetches";
 
 type T_UserInforItem = {
   icon: JSX.Element;
@@ -65,6 +66,7 @@ export default function IndexPage() {
   const [hostTrack, setHostTrack] = useState<number>();
   const [followedHost, setFollowedHost] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [trackingData, setTrackingData] = useState<any | null>(null);
 
   useEffect(() => {
     if (initData?.user?.id && initData?.user?.username) {
@@ -76,22 +78,21 @@ export default function IndexPage() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await api.get("/api/creators/");
-        const response1 = await api.get(
-          `api/accounts/${initData?.user?.id}/follows/`
-        );
-
-        setHostTrack(response.data?.count);
-        setFollowedHost(response1.data?.count);
-        setIsLoading(false);
+        const user = fetchUserData(initData?.user?.id);
+        setTrackingData(user);
       } catch (error) {
         setIsLoading(false);
         console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
   }, [initData]);
+
+  const follows = trackingData?.follows;
+  const maxFollows = trackingData?.current_subscription?.plan?.max_follows;
 
   return (
     <main className="flex w-full min-h-screen justify-center bg-background p-3 pb-[100px] ">
@@ -122,8 +123,8 @@ export default function IndexPage() {
             <CardWrapper className="h-[66px] px-4 py-3 cursor-pointer">
               <SignalCard
                 title="Hosts tracked"
-                amount={followedHost?.toString() ?? "0"}
-                total={hostTrack?.toString() ?? "0"}
+                amount={follows?.toString() ?? "0"}
+                total={maxFollows?.toString() ?? "0"}
               >
                 <Avatar>
                   <AvatarImage src={"/images/host.png"} />
