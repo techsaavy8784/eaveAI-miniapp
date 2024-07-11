@@ -14,7 +14,7 @@ import { SlUserFollowing, SlUserUnfollow } from "react-icons/sl";
 import { PiDotsThreeOutlineFill } from "react-icons/pi";
 ``;
 import { useRouter } from "next/navigation";
-import apiClient from "@/lib/api";
+import apiClient from "@/libs/api";
 
 interface FollowButtonProps {
   hostId?: number;

@@ -1,10 +1,13 @@
-export async function fetchUserData(telegramEntityId: number | undefined) {
-  const url = `https://api-eave-dev.azurewebsites.net/api/accounts/get_by_telegram_entity_id/?telegram_entity_id=${telegramEntityId}`;
+const API_KEY = "O4g7hFBP.Wa2y8ftUqjjk0BAaPPFwxCqCPVGcK7ls";
+const BASE_URL = "https://api-eave-dev.azurewebsites.net/api";
+
+async function fetchUserData(telegramEntityId: number) {
+  const url = `${BASE_URL}/accounts/get_by_telegram_entity_id/?telegram_entity_id=${telegramEntityId}`;
 
   const apiResponse = await fetch(url, {
     method: "GET",
     headers: {
-      "x-api-key": "O4g7hFBP.Wa2y8ftUqjjk0BAaPPFwxCqCPVGcK7ls",
+      "x-api-key": API_KEY,
     },
   });
 
@@ -17,13 +20,13 @@ export async function fetchUserData(telegramEntityId: number | undefined) {
   return result;
 }
 
-export async function fetchTrackingData(telegramEntityId: number | undefined) {
-  const url = `https://api-eave-dev.azurewebsites.net/api/accounts/${telegramEntityId}/follows/`;
+async function fetchTrackingData(telegramEntityId: number) {
+  const url = `${BASE_URL}/accounts/${telegramEntityId}/follows/`;
 
   const apiResponse = await fetch(url, {
     method: "GET",
     headers: {
-      "x-api-key": "O4g7hFBP.Wa2y8ftUqjjk0BAaPPFwxCqCPVGcK7ls",
+      "x-api-key": API_KEY,
     },
   });
 
@@ -36,19 +39,19 @@ export async function fetchTrackingData(telegramEntityId: number | undefined) {
   return result;
 }
 
-export async function fetchHostsData(
+async function fetchHostsData(
   offset: number,
   limit: number,
   twitter_username: string | null
 ) {
-  const url =
-    `https://api-eave-dev.azurewebsites.net/api/creators/?offset=${offset}&limit=${limit}` +
-    (twitter_username ? `&search=${twitter_username}` : "");
+  const url = `${BASE_URL}/creators/?offset=${offset}&limit=${limit}${
+    twitter_username ? `&search=${twitter_username}` : ""
+  }`;
 
   const apiResponse = await fetch(url, {
     method: "GET",
     headers: {
-      "x-api-key": "O4g7hFBP.Wa2y8ftUqjjk0BAaPPFwxCqCPVGcK7ls",
+      "x-api-key": API_KEY,
     },
   });
 
@@ -60,13 +63,13 @@ export async function fetchHostsData(
   return result;
 }
 
-export async function fetchLiveSpaces() {
-  const url = `https://api-eave-dev.azurewebsites.net/api/spaces/?state=live`;
+async function fetchLiveSpaces(telegramEntityId: number) {
+  const url = `${BASE_URL}/spaces/?state=live`;
 
   const apiResponse = await fetch(url, {
     method: "GET",
     headers: {
-      "x-api-key": "O4g7hFBP.Wa2y8ftUqjjk0BAaPPFwxCqCPVGcK7ls",
+      "x-api-key": API_KEY,
     },
   });
 
@@ -78,15 +81,13 @@ export async function fetchLiveSpaces() {
   return result.results;
 }
 
-export async function fetchCreatorSpaces(
-  creatorUsername: string
-): Promise<any> {
-  const url = `https://api-eave-dev.azurewebsites.net/api/spaces/?creator_username=${creatorUsername}&limit=5`;
+async function fetchCreatorSpaces(creatorUsername: string): Promise<any> {
+  const url = `${BASE_URL}/spaces/?creator_username=${creatorUsername}&limit=5`;
 
   const apiResponse = await fetch(url, {
     method: "GET",
     headers: {
-      "x-api-key": "O4g7hFBP.Wa2y8ftUqjjk0BAaPPFwxCqCPVGcK7ls",
+      "x-api-key": API_KEY,
     },
   });
 
@@ -98,15 +99,15 @@ export async function fetchCreatorSpaces(
   return result.results;
 }
 
-export async function fetchCreatorData(
+async function fetchCreatorData(
   telegramEntityId: number,
   creatorUsername: string
 ): Promise<any> {
-  const url = `https://api-eave-dev.azurewebsites.net/api/creators/?entity_id=${telegramEntityId}&twitter_username=${creatorUsername}`;
+  const url = `${BASE_URL}/creators/?entity_id=${telegramEntityId}&twitter_username=${creatorUsername}`;
   const apiResponse = await fetch(url, {
     method: "GET",
     headers: {
-      "x-api-key": "O4g7hFBP.Wa2y8ftUqjjk0BAaPPFwxCqCPVGcK7ls",
+      "x-api-key": API_KEY,
     },
   });
 
@@ -125,3 +126,12 @@ export async function fetchCreatorData(
     // throw new Error('No data found for the specified creatorUsername');
   }
 }
+
+export {
+  fetchUserData,
+  fetchTrackingData,
+  fetchHostsData,
+  fetchLiveSpaces,
+  fetchCreatorSpaces,
+  fetchCreatorData,
+};

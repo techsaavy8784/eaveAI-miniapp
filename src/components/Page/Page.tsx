@@ -1,7 +1,7 @@
 import type { FC, PropsWithChildren, ReactNode } from "react";
 
 import styles from "./Page.module.css";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 
 export interface PageProps extends PropsWithChildren {
   title?: string;

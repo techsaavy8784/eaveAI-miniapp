@@ -6,7 +6,7 @@ import { GoSearch } from "react-icons/go";
 import useUserStore from "@/store/useStore";
 import { Input } from "@/components/ui/input";
 import HostTable from "@/components/HostTable";
-import { fetchHostsData } from "@/lib/dataFetches";
+import { fetchHostsData } from "@/libs/dataFetches";
 
 const SignalInfoCard = ({
   id,
