@@ -8,7 +8,7 @@ import CardWrapper from "@/components/CardWrapper";
 import { useInitData, type User, useLaunchParams } from "@tma.js/sdk-react";
 import useUserStore from "@/store/useStore";
 import { FadeLoader } from "react-spinners";
-import { fetchUserData } from "@/lib/dataFetches";
+import { fetchUserData } from "@/libs/dataFetches";
 
 type T_UserInforItem = {
   icon: JSX.Element;
@@ -57,8 +57,10 @@ export default function IndexPage() {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const user = fetchUserData(initData?.user?.id);
-        setTrackingData(user);
+        if (initData?.user?.id) {
+          const user = fetchUserData(initData.user.id);
+          setTrackingData(user);
+        }
       } catch (error) {
         setIsLoading(false);
         console.error("Error fetching data:", error);

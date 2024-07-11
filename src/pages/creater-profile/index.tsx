@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchTrackingData, fetchCreatorData } from "@/lib/dataFetches";
+import { fetchTrackingData, fetchCreatorData } from "@/libs/dataFetches";
 import useUserStore from "@/store/useStore";
 import CardWrapper from "@/components/CardWrapper";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

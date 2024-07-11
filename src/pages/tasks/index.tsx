@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useUserStore from "@/store/useStore";
 import { FadeLoader } from "react-spinners";
 import { Link } from "@/components/Link/Link";
-import { fetchTrackingData } from "@/lib/dataFetches";
+import { fetchTrackingData } from "@/libs/dataFetches";
 import { LuEye } from "react-icons/lu";
 import { useRouter } from "next/navigation";
 
