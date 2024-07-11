@@ -71,8 +71,12 @@ export default function CreaterProfilePage() {
                 <AvatarFallback>Host</AvatarFallback>
               </Avatar>
               <div className="flex flex-1 flex-col justify-center items-start gap-1">
-                <p className="text-white text-sm font-semibold">Moby Media</p>
-                <p className="text-[#AAAAAA] text-xs">@mobymedia</p>
+                <p className="text-white text-sm font-semibold">
+                  {trackData?.twitter_name}
+                </p>
+                <p className="text-[#AAAAAA] text-xs">
+                  {trackData?.twitter_username}
+                </p>
               </div>
             </div>
             <p className="w-full text-[#AAAAAA] text-sm text-justify">
