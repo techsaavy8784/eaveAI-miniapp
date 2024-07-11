@@ -17,7 +17,7 @@ export const Page: FC<PageProps> = ({
 }) => (
   <div
     className={cn(
-      "bg-background flex w-full min-h-screen flex-col items-center justify-between p-3 animate-opacity-scale",
+      "bg-background flex w-full min-h-screen flex-col items-center justify-between p-3",
       className
     )}
   >

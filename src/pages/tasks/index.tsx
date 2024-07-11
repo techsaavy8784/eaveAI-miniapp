@@ -17,6 +17,17 @@ import {
 import { LuEye } from "react-icons/lu";
 import { SlUserUnfollow } from "react-icons/sl";
 import { useRouter } from "next/navigation";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const SignalInfoCard = ({
   id,
@@ -58,9 +69,25 @@ const SignalInfoCard = ({
               </PopoverTrigger>
               <PopoverContent className="mt-1">
                 <div className="flex flex-col gap-1">
-                  <div className="flex w-8 h-8 justify-center items-center rounded-full transition-all active:bg-[#787878] cursor-pointer">
-                    <SlUserUnfollow className="w-4 h-47 text-white" />
-                  </div>
+                  <AlertDialog>
+                    <AlertDialogTrigger>
+                      <div className="flex w-8 h-8 justify-center items-center rounded-full transition-all active:bg-[#787878] cursor-pointer">
+                        <SlUserUnfollow className="w-4 h-47 text-white" />
+                      </div>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction>Unfollow</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                   <div
                     onClick={() => {
                       handleMoveToCreaterProfile(id);
@@ -95,7 +122,8 @@ type T_TrackData = {
   twitter_created_at: string;
   last_updated: string;
   is_whitelisted: boolean;
-};``
+};
+``;
 
 export default function FriendsPage() {
   const [trackData, setTrackData] = useState<T_TrackData[]>([]);
@@ -149,7 +177,7 @@ export default function FriendsPage() {
           <div className="w-full mt-6 mb-7 h-[1px] bg-[#FFFFFF1A]"></div>
         </div>
         <div className="w-full flex flex-col gap-[10px] animate-opacity-scale">
-          <CardWrapper className="h-[54px] bg-[#6174EC33]">
+          <CardWrapper className="h-[54px] bg-[#6174EC33] cursor-pointer">
             <Link href="/add-host">
               <SignalInfoCard title="Add Host" icon>
                 <Avatar>

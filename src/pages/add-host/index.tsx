@@ -9,6 +9,8 @@ import { GoSearch } from "react-icons/go";
 import useUserStore from "@/store/useStore";
 import { Input } from "@/components/ui/input";
 import api from "@/lib/api";
+import HostTable from "@/components/HostTable";
+import { fetchHostsData } from "@/lib/dataFetches";
 
 const SignalInfoCard = ({
   id,
@@ -67,61 +69,74 @@ export default function ProfilePage() {
   const [hostTrack, setHostTrack] = useState<number>(0);
   const [followedHost, setFollowedHost] = useState<number>(0);
   const [search, setSearch] = useState<string>("");
+  const [allHostData, setAllHostData] = useState<any>([]);
+  const [totalHostData, setTotalHostData] = useState<number>(0);
+
+  const [page, setPage] = useState<number>(1);
+  const [pageLimit, setPageLimit] = useState<number>(10);
 
   const { userId, username } = useUserStore((state: any) => ({
     userId: state.userId,
     username: state.username,
   }));
 
+  const offset = (page - 1) * pageLimit;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await api.get("/api/creators/");
-        const response1 = await api.get(`api/accounts/${userId}/follows/`);
+        if (search?.length > 0) {
+          setPage(1);
+          setPageLimit(10);
+        }
 
-        setTrackData(response.data?.results || []);
-        setHostTrack(response.data?.count);
-        setFollowedHost(response1.data?.count);
-        setIsLoading(false);
+        const hostsData = await fetchHostsData(offset, pageLimit, search);
+
+        setAllHostData(hostsData.results);
+        setTotalHostData(hostsData.count);
       } catch (error) {
         setIsLoading(false);
         console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [offset, pageLimit, search]);
 
   return (
     <Page className="justify-start">
-      {/* {isLoading && (
+      {isLoading && (
         <div className="fixed w-full h-screen flex justify-center items-center top-0 left-0 z-50 bg-black/70">
           <FadeLoader color="#6174ec" height={20} width={6} />
         </div>
-      )} */}
-      <div className="relative w-full flex flex-col items-center justify-start animate-opacity-scale">
-        <div className="w-full flex flex-col items-center gap-2">
+      )}
+      <div className="relative w-full flex flex-col items-center justify-start">
+        <div className="w-full flex flex-col items-center gap-2  animate-opacity-scale">
           <span className="text-xl font-semibold text-white">Add new host</span>
-          <span className="text-white text-sm font-semibold mt-2">Plan: Basic</span>
+          {/* <span className="text-white text-sm font-semibold mt-2">
+            Plan: Basic
+          </span>
           <p className="text-[#AAAAAA] text-xs">
             Hosts Tracked: {hostTrack + "/" + followedHost}
-          </p>
-          <div className="w-full mt-6 mb-7 h-[1px] bg-[#FFFFFF1A]"></div>
+          </p> */}
+          <div className="w-full mt-3 mb-7 h-[1px] bg-[#FFFFFF1A]"></div>
         </div>
-        <div className="relative w-full">
+        <div className="relative w-full  animate-opacity-scale">
           <Input
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
             }}
             className="bg-transparent border border-[#AAAAAA] h-11 text-border text-sm placeholder:text-[#AAAAAA] placeholder:text-sm"
-            placeholder="Enter a guild @name to search"
+            placeholder="Enter a twitter @name to search"
           />
           <GoSearch className="absolute right-3 top-3 w-5 h-5 text-border" />
         </div>
 
-        <div className="w-full flex flex-col gap-[10px] animate-opacity-scale">
+        {/* <div className="w-full flex flex-col gap-[10px] animate-opacity-scale">
           {trackData?.map((track: any, index: number) => {
             return (
               <CardWrapper key={index} className="h-[54px]">
@@ -138,7 +153,15 @@ export default function ProfilePage() {
               </CardWrapper>
             );
           })}
-        </div>
+        </div> */}
+        <HostTable
+          page={page}
+          setPage={setPage}
+          pageLimit={pageLimit}
+          setPageLimit={setPageLimit}
+          totalItems={totalHostData}
+          data={allHostData}
+        />
       </div>
     </Page>
   );

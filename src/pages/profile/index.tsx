@@ -14,6 +14,7 @@ import {
   fetchLiveSpaces,
   fetchTrackingData,
 } from "@/lib/dataFetches";
+import { FadeLoader } from "react-spinners";
 
 type T_UserInforItem = {
   icon: JSX.Element;
@@ -70,8 +71,8 @@ interface Space {
 
 const ProfilePage: React.FC = () => {
   const [userData, setUserData] = useState<any | null>(null);
-  const [spaces, setSpaces] = useState<Space[]>([]);
-  const [trackingData, setTrackingData] = useState<any>(null);
+  // const [spaces, setSpaces] = useState<Space[]>([]);
+  // const [trackingData, setTrackingData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -83,14 +84,14 @@ const ProfilePage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [user, liveSpaces, tracking] = await Promise.all([
+        const user = await Promise.all([
           fetchUserData(userId),
-          fetchLiveSpaces(),
-          fetchTrackingData(userId),
+          // fetchLiveSpaces(),
+          // fetchTrackingData(userId),
         ]);
         setUserData(user);
-        setSpaces(liveSpaces);
-        setTrackingData(tracking);
+        // setSpaces(liveSpaces);
+        // setTrackingData(tracking);
       } catch (err) {
         console.log(err);
       } finally {
@@ -101,16 +102,14 @@ const ProfilePage: React.FC = () => {
     fetchData();
   }, [userId]);
 
-  console.log(userData);
-  console.log(spaces);
-  console.log(trackingData);
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-
   return (
     <Page>
-      <CardWrapper className="flex h-[410px] flex-col gap-2 justify-between items-center bg-[#0F0F0F] pt-4">
+      {loading && (
+        <div className="fixed w-full h-screen flex justify-center items-center top-0 left-0 z-50 bg-black/70">
+          <FadeLoader color="#6174ec" height={20} width={6} />
+        </div>
+      )}
+      <CardWrapper className="flex h-[410px] flex-col gap-2 justify-between items-center bg-[#0F0F0F] pt-4 animate-opacity-scale">
         <Avatar className="w-[113px] h-[113px]">
           <AvatarImage src={"/images/avatar-lg.png"} />
           <AvatarFallback>Host</AvatarFallback>
@@ -143,7 +142,7 @@ const ProfilePage: React.FC = () => {
         </CardWrapper>
       </CardWrapper>
 
-      <div className="flex flex-1 w-full flex-col justify-end items-center p-2 gap-2.5">
+      <div className="flex flex-1 w-full flex-col justify-end items-center p-2 gap-2.5 animate-opacity-scale">
         <button className="w-full h-[50px] rounded-md bg-[#6174EC] text-white text-sm font-semibold">
           Upgrade Plan
         </button>
