@@ -95,7 +95,7 @@ type T_TrackData = {
   twitter_created_at: string;
   last_updated: string;
   is_whitelisted: boolean;
-};
+};``
 
 export default function FriendsPage() {
   const [trackData, setTrackData] = useState<T_TrackData[]>([]);
@@ -175,7 +175,7 @@ export default function FriendsPage() {
               </CardWrapper>
             );
           })}
-          <CardWrapper className="h-[54px]">
+          {/* <CardWrapper className="h-[54px]">
             <SignalInfoCard
               title="@CryptoGuru"
               subTitle="Detailed insights on market trends and forecasts"
@@ -198,7 +198,7 @@ export default function FriendsPage() {
                 <AvatarFallback>Host</AvatarFallback>
               </Avatar>
             </SignalInfoCard>
-          </CardWrapper>
+          </CardWrapper> */}
         </div>
       </div>
       <Navbar />
