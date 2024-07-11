@@ -8,6 +8,15 @@ import useUserStore from "@/store/useStore";
 import api from "@/lib/api";
 import { FadeLoader } from "react-spinners";
 import { Link } from "@/components/Link/Link";
+import { fetchTrackingData } from "@/lib/dataFetches";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { LuEye } from "react-icons/lu";
+import { SlUserUnfollow } from "react-icons/sl";
+import { useRouter } from "next/navigation";
 
 const SignalInfoCard = ({
   id,
@@ -22,23 +31,50 @@ const SignalInfoCard = ({
   children: ReactNode;
   icon?: boolean;
 }) => {
+  const router = useRouter();
+
+  const handleMoveToCreaterProfile = (id: number) => {
+    router.push(`/creater-profile?id=${id}`);
+  };
+
   return (
     <div className="w-full flex justify-between items-center gap-[10px]">
       {children}
-      <div className="w-full flex flex-col gap-1 text-sm overflow-hidden">
+      <div className="w-full flex flex-1 flex-col gap-1 text-sm overflow-hidden">
         <p className="text-white font-semibold">{title}</p>
         <p className="text-[#AAAAAA] text-xs truncate">{subTitle}</p>
       </div>
       {!icon &&
         (id ? (
-          <TbDotsVertical
-            onClick={() => {
-              openToolTip(id);
-            }}
-            className="w-6 h-6 text-[#78797E] cursor-pointer"
-          />
+          <div className="flex w-8 h-8 justify-center items-center rounded-full transition-all active:bg-[#787878]">
+            <Popover>
+              <PopoverTrigger>
+                <TbDotsVertical
+                  onClick={() => {
+                    openToolTip(id);
+                  }}
+                  className="flex-1 w-6 h-6 text-[#78797E] cursor-pointer"
+                />
+              </PopoverTrigger>
+              <PopoverContent className="mt-1">
+                <div className="flex flex-col gap-1">
+                  <div className="flex w-8 h-8 justify-center items-center rounded-full transition-all active:bg-[#787878] cursor-pointer">
+                    <SlUserUnfollow className="w-4 h-47 text-white" />
+                  </div>
+                  <div
+                    onClick={() => {
+                      handleMoveToCreaterProfile(id);
+                    }}
+                    className="flex w-8 h-8 justify-center items-center rounded-full transition-all active:bg-[#787878] cursor-pointer"
+                  >
+                    <LuEye className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
         ) : (
-          <TbDotsVertical className="w-6 h-6 text-[#78797E] cursor-pointer" />
+          <TbDotsVertical className="flex-1 w-6 h-6 text-[#78797E] cursor-pointer" />
         ))}
     </div>
   );
@@ -58,6 +94,7 @@ type T_TrackData = {
   twitter_description: string;
   twitter_created_at: string;
   last_updated: string;
+  is_whitelisted: boolean;
 };
 
 export default function FriendsPage() {
@@ -74,22 +111,19 @@ export default function FriendsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const tracking = await fetchTrackingData(userId);
+        setTrackData(tracking);
         setIsLoading(true);
-        const response = await api.get("/api/creators/");
-        const response1 = await api.get(`api/accounts/${userId}/follows/`);
-
-        setTrackData(response.data?.results || []);
-        setHostTrack(response.data?.count);
-        setFollowedHost(response1.data?.count);
-        setIsLoading(false);
       } catch (error) {
         setIsLoading(false);
         console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [userId]);
 
   return (
     <div className="flex w-full min-h-screen justify-center bg-background p-3 pb-[100px] ">
@@ -115,6 +149,16 @@ export default function FriendsPage() {
           <div className="w-full mt-6 mb-7 h-[1px] bg-[#FFFFFF1A]"></div>
         </div>
         <div className="w-full flex flex-col gap-[10px] animate-opacity-scale">
+          <CardWrapper className="h-[54px] bg-[#6174EC33]">
+            <Link href="/add-host">
+              <SignalInfoCard title="Add Host" icon>
+                <Avatar>
+                  <AvatarImage src={"/images/add-button.png"} />
+                  <AvatarFallback>Host</AvatarFallback>
+                </Avatar>
+              </SignalInfoCard>
+            </Link>
+          </CardWrapper>
           {trackData?.map((track: any, index: number) => {
             return (
               <CardWrapper key={index} className="h-[54px]">
@@ -131,15 +175,29 @@ export default function FriendsPage() {
               </CardWrapper>
             );
           })}
-          <CardWrapper className="h-[54px] bg-[#6174EC33]">
-            <Link href="/add-host">
-              <SignalInfoCard title="Add Host" icon>
-                <Avatar>
-                  <AvatarImage src={"/images/add-button.png"} />
-                  <AvatarFallback>Host</AvatarFallback>
-                </Avatar>
-              </SignalInfoCard>
-            </Link>
+          <CardWrapper className="h-[54px]">
+            <SignalInfoCard
+              title="@CryptoGuru"
+              subTitle="Detailed insights on market trends and forecasts"
+              id={1}
+            >
+              <Avatar>
+                <AvatarImage src={"/images/signal-avatar-1.png"} />
+                <AvatarFallback>Host</AvatarFallback>
+              </Avatar>
+            </SignalInfoCard>
+          </CardWrapper>
+          <CardWrapper className="h-[54px]">
+            <SignalInfoCard
+              title="@CryptoGuru"
+              subTitle="Analysis of emerging tokens and market movements"
+              id={2}
+            >
+              <Avatar>
+                <AvatarImage src={"/images/signal-avatar-1.png"} />
+                <AvatarFallback>Host</AvatarFallback>
+              </Avatar>
+            </SignalInfoCard>
           </CardWrapper>
         </div>
       </div>
