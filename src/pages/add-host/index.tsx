@@ -1,14 +1,10 @@
 import { ReactNode, useEffect, useState } from "react";
 import { TbDotsVertical } from "react-icons/tb";
-import CardWrapper from "@/components/CardWrapper";
-import Image from "next/image";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FadeLoader } from "react-spinners";
 import { Page } from "@/components/Page/Page";
 import { GoSearch } from "react-icons/go";
 import useUserStore from "@/store/useStore";
 import { Input } from "@/components/ui/input";
-import api from "@/lib/api";
 import HostTable from "@/components/HostTable";
 import { fetchHostsData } from "@/lib/dataFetches";
 
@@ -64,21 +60,13 @@ type T_TrackData = {
 };
 
 export default function ProfilePage() {
-  const [trackData, setTrackData] = useState<T_TrackData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [hostTrack, setHostTrack] = useState<number>(0);
-  const [followedHost, setFollowedHost] = useState<number>(0);
   const [search, setSearch] = useState<string>("");
   const [allHostData, setAllHostData] = useState<any>([]);
   const [totalHostData, setTotalHostData] = useState<number>(0);
 
   const [page, setPage] = useState<number>(1);
   const [pageLimit, setPageLimit] = useState<number>(10);
-
-  const { userId, username } = useUserStore((state: any) => ({
-    userId: state.userId,
-    username: state.username,
-  }));
 
   const offset = (page - 1) * pageLimit;
 

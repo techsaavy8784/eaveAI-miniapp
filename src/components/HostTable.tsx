@@ -10,32 +10,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { MdNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import { TbDotsVertical } from "react-icons/tb";
-import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import useUserStore from "@/store/useStore";
-import api from "@/lib/api";
-import { FadeLoader } from "react-spinners";
-import { Link } from "@/components/Link/Link";
-import { fetchTrackingData } from "@/lib/dataFetches";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { LuEye } from "react-icons/lu";
-import { SlUserFollowing } from "react-icons/sl";
 import { useRouter } from "next/navigation";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 const SignalInfoCard = ({
   id,
@@ -43,16 +20,18 @@ const SignalInfoCard = ({
   subTitle,
   children,
   icon,
+  username,
 }: {
   id?: number;
   title: string;
   subTitle?: string;
   children: ReactNode;
   icon?: boolean;
+  username?: string;
 }) => {
   const router = useRouter();
 
-  const handleMoveToCreaterProfile = (id: number) => {
+  const handleMoveToCreaterProfile = (id: string) => {
     router.push(`/creater-profile?id=${id}`);
   };
 
@@ -64,45 +43,16 @@ const SignalInfoCard = ({
         <p className="text-[#AAAAAA] text-xs truncate">{subTitle}</p>
       </div>
       {!icon &&
-        (id ? (
+        (username ? (
           <div className="flex w-8 h-8 justify-center items-center rounded-full transition-all active:bg-[#787878]">
-            <Popover>
-              <PopoverTrigger>
-                <TbDotsVertical className="flex-1 w-6 h-6 text-[#78797E] cursor-pointer" />
-              </PopoverTrigger>
-              <PopoverContent className="mt-1">
-                <div className="flex flex-col gap-1">
-                  <AlertDialog>
-                    <AlertDialogTrigger>
-                      <div className="flex w-8 h-8 justify-center items-center rounded-full transition-all active:bg-[#787878] cursor-pointer">
-                        <SlUserFollowing className="w-4 h-47 text-white" />
-                      </div>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction>Follow</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-
-                  <div
-                    onClick={() => {
-                      handleMoveToCreaterProfile(id);
-                    }}
-                    className="flex w-8 h-8 justify-center items-center rounded-full transition-all active:bg-[#787878] cursor-pointer"
-                  >
-                    <LuEye className="w-5 h-5 text-white" />
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+            <div
+              onClick={() => {
+                handleMoveToCreaterProfile(username);
+              }}
+              className="flex w-8 h-8 justify-center items-center rounded-full transition-all active:bg-[#787878] cursor-pointer border border-[#787878]"
+            >
+              <LuEye className="w-4 h-4 text-white" />
+            </div>
           </div>
         ) : (
           <TbDotsVertical className="flex-1 w-6 h-6 text-[#78797E] cursor-pointer" />
@@ -124,37 +74,42 @@ const HostTable: React.FC<{
   };
 
   const handleNext = () => {
-    setPage(page + 1);
+    if (page < Math.ceil(totalItems / pageLimit)) {
+      setPage(page + 1);
+    }
   };
+
+  const totalPages = Math.ceil(totalItems / pageLimit);
+  const noData = totalItems === 0;
 
   return (
     <div className="flex w-full flex-col justify-center items-center gap-4 mt-4  animate-opacity-scale">
       <div className="flex w-full justify-between gap-4">
         <div className="flex flex-1  gap-2">
           <Button
-            disabled={page === 1}
+            disabled={page === 1 || noData}
             onClick={() => setPage(1)}
             variant="outline"
           >
             First
           </Button>
           <Button
-            disabled={page === 1}
+            disabled={page === 1 || noData}
             onClick={handlePrevious}
             variant="outline"
           >
             <MdNavigateBefore className="w-6 h-6" />
           </Button>
           <Button
-            disabled={page === Math.ceil(totalItems / pageLimit) || page === 1}
+            disabled={page === totalPages || noData}
             onClick={handleNext}
             variant="outline"
           >
             <MdOutlineNavigateNext className="w-6 h-6" />
           </Button>
           <Button
-            disabled={page === 1}
-            onClick={() => setPage(Math.ceil(totalItems / pageLimit))}
+            disabled={page === totalPages || noData}
+            onClick={() => setPage(totalPages)}
             variant="outline"
           >
             Last
@@ -185,6 +140,7 @@ const HostTable: React.FC<{
                   title={"@" + track?.twitter_username}
                   subTitle={track?.twitter_description}
                   id={track?.id}
+                  username={track.twitter_username}
                 >
                   <Avatar>
                     <AvatarImage src={track?.twitter_profile_image_url} />
@@ -200,6 +156,7 @@ const HostTable: React.FC<{
             title="@CryptoGuru"
             subTitle="Detailed insights on market trends and forecasts"
             id={1}
+            username="CryptoGuru111"s
           >
             <Avatar>
               <AvatarImage src={"/images/signal-avatar-1.png"} />
@@ -212,6 +169,7 @@ const HostTable: React.FC<{
             title="@CryptoGuru"
             subTitle="Analysis of emerging tokens and market movements"
             id={2}
+            username="CryptoGuru"
           >
             <Avatar>
               <AvatarImage src={"/images/signal-avatar-1.png"} />

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { fetchTrackingData } from "@/lib/dataFetches";
+import { fetchTrackingData, fetchCreatorData } from "@/lib/dataFetches";
 import useUserStore from "@/store/useStore";
 import CardWrapper from "@/components/CardWrapper";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSearchParams } from "next/navigation";
 import { FadeLoader } from "react-spinners";
+import FollowButton from "@/components/FollowButton";
 
 type T_TrackData = {
   id: number;
@@ -21,9 +22,26 @@ type T_TrackData = {
   is_whitelisted: boolean;
 };
 
+interface T_CreatorData {
+  id: number;
+  twitter_id: string;
+  twitter_username: string;
+  twitter_profile_image_url: string;
+  twitter_verified: boolean;
+  twitter_verified_type: string;
+  twitter_name: string;
+  twitter_location: string | null;
+  twitter_description: string;
+  twitter_created_at: string;
+  last_updated: string;
+  is_whitelisted: boolean;
+  is_following: boolean;
+}
+
 export default function CreaterProfilePage() {
   const [trackData, setTrackData] = useState<T_TrackData>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [creator, setCreator] = useState<T_CreatorData>();
 
   const { userId, username } = useUserStore((state: any) => ({
     userId: state.userId,
@@ -31,15 +49,25 @@ export default function CreaterProfilePage() {
   }));
 
   const params = useSearchParams();
-  const creatorId = params.get("id");
+  const creatorUsername = params.get("id");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const tracking = await fetchTrackingData(userId);
-        setTrackData(
-          tracking.filter((item: T_TrackData) => (item.id = Number(creatorId)))
-        );
+        if (creatorUsername) {
+          const filteredData = tracking.filter(
+            (item: T_TrackData) => item.twitter_username === creatorUsername
+          );
+          const creatorData: T_CreatorData = await fetchCreatorData(
+            userId,
+            creatorUsername
+          );
+
+          setCreator(creatorData);
+          setTrackData(filteredData);
+        }
+
         setIsLoading(true);
       } catch (error) {
         setIsLoading(false);
@@ -50,7 +78,7 @@ export default function CreaterProfilePage() {
     };
 
     fetchData();
-  }, [userId, creatorId]);
+  }, [userId, creatorUsername]);
 
   return (
     <div className="flex w-full min-h-screen justify-center bg-background p-3 pb-[100px] ">
@@ -60,9 +88,15 @@ export default function CreaterProfilePage() {
         </div>
       )}
       <div className="relative w-full flex flex-col items-center justify-start animate-opacity-scale">
-        <p className="w-full text-white text-2xl text-start font-bold mt-5">
-          Host: {trackData?.twitter_username}
-        </p>
+        <div className="flex w-full justify-between gap-2  mt-5">
+          <p className="w-full text-white text-2xl text-start font-bold">
+            Host: {trackData?.twitter_username}
+          </p>
+          <FollowButton
+            hostId={creator?.id}
+            is_following={creator?.is_following}
+          />
+        </div>
         <CardWrapper className="bg-transparent border border-[#787878] p-5 mt-6">
           <div className="flex w-full flex-col gap-3 justify-center items-center">
             <div className="flex w-full justify-center items-center gap-2">
