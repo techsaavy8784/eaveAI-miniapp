@@ -131,16 +131,29 @@ const HostTable: React.FC<{
     <div className="flex w-full flex-col justify-center items-center gap-4 mt-4  animate-opacity-scale">
       <div className="flex w-full justify-between gap-4">
         <div className="flex flex-1  gap-2">
-          <Button onClick={() => setPage(1)} variant="outline">
+          <Button
+            disabled={page === 1}
+            onClick={() => setPage(1)}
+            variant="outline"
+          >
             First
           </Button>
-          <Button onClick={handlePrevious} variant="outline">
+          <Button
+            disabled={page === 1}
+            onClick={handlePrevious}
+            variant="outline"
+          >
             <MdNavigateBefore className="w-6 h-6" />
           </Button>
-          <Button onClick={handleNext} variant="outline">
+          <Button
+            disabled={page === Math.ceil(totalItems / pageLimit) || page === 1}
+            onClick={handleNext}
+            variant="outline"
+          >
             <MdOutlineNavigateNext className="w-6 h-6" />
           </Button>
           <Button
+            disabled={page === 1}
             onClick={() => setPage(Math.ceil(totalItems / pageLimit))}
             variant="outline"
           >
