@@ -1,5 +1,7 @@
+"use client"
+
 import React, { useCallback, useEffect, useState } from "react";
-import { Icons } from "@/components/Icons";
+import { Icons } from "./Icons";
 import { useRouter, usePathname } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 

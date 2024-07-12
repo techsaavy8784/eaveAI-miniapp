@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState, ReactNode } from "react";
 import CardWrapper from "./CardWrapper";
 import {
@@ -12,7 +14,9 @@ import { MdNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import { TbDotsVertical } from "react-icons/tb";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LuEye } from "react-icons/lu";
-import { useRouter } from "next/navigation";
+import { GoSearch } from "react-icons/go";
+import { Input } from "@/components/ui/input";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const SignalInfoCard = ({
   id,
@@ -31,8 +35,8 @@ const SignalInfoCard = ({
 }) => {
   const router = useRouter();
 
-  const handleMoveToCreaterProfile = (id: string) => {
-    router.push(`/creater-profile?id=${id}`);
+  const handleMoveToCreaterProfile = (username: string) => {
+    router.push(`/creater-profile/${username}`);
   };
 
   return (
@@ -62,40 +66,67 @@ const SignalInfoCard = ({
 };
 
 const HostTable: React.FC<{
+  searchKey: string;
   page: number;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
   pageLimit: number;
-  setPageLimit: React.Dispatch<React.SetStateAction<number>>;
   totalItems: number;
   data: any;
-}> = ({ page, setPage, pageLimit, setPageLimit, totalItems, data }) => {
-  const handlePrevious = () => {
-    if (page > 1) setPage(page - 1);
-  };
+}> = ({ page, pageLimit, totalItems, data }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const handleNext = () => {
-    if (page < Math.ceil(totalItems / pageLimit)) {
-      setPage(page + 1);
-    }
-  };
+  const [search, setSearch] = useState<string>("");
+
+  const [pageNo, setPageNo] = useState<number>(page);
+  const [pageLim, setPageLim] = useState<number>(pageLimit);
 
   const totalPages = Math.ceil(totalItems / pageLimit);
   const noData = totalItems === 0;
 
+  const handleBefore = () => {
+    if (pageNo !== 1) {
+      setPageNo(pageNo - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (pageNo < totalPages) {
+      setPageNo(pageNo + 1);
+    }
+  };
+
+  const handleLast = () => {
+    setPageNo(totalPages);
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (search?.length > 0) {
+      params.set("search", search);
+    } else {
+      params.delete("search");
+    }
+    params.set("page", pageNo.toString());
+    params.set("limit", pageLim.toString());
+
+    router.push(`${pathname}?${params.toString()}`);
+  }, [search, searchParams, pathname, router, pageNo, pageLim]);
+
   return (
-    <div className="flex w-full flex-col justify-center items-center gap-4 mt-4  animate-opacity-scale">
+    <div className="flex w-full flex-col gap-4 justify-center items-center">
       <div className="flex w-full justify-between gap-4">
         <div className="flex flex-1  gap-2">
           <Button
             disabled={page === 1 || noData}
-            onClick={() => setPage(1)}
+            onClick={() => setPageNo(1)}
             variant="outline"
           >
             First
           </Button>
           <Button
             disabled={page === 1 || noData}
-            onClick={handlePrevious}
+            onClick={handleBefore}
             variant="outline"
           >
             <MdNavigateBefore className="w-6 h-6" />
@@ -109,15 +140,15 @@ const HostTable: React.FC<{
           </Button>
           <Button
             disabled={page === totalPages || noData}
-            onClick={() => setPage(totalPages)}
+            onClick={handleLast}
             variant="outline"
           >
             Last
           </Button>
         </div>
         <Select
-          value={String(pageLimit)}
-          onValueChange={(value) => setPageLimit(Number(value))}
+          value={String(pageLim)}
+          onValueChange={(value) => setPageLim(Number(value))}
         >
           <SelectTrigger className="w-[65px]">
             <SelectValue placeholder="10" />
@@ -129,54 +160,42 @@ const HostTable: React.FC<{
           </SelectContent>
         </Select>
       </div>
-      <div className="w-full flex flex-col gap-[6px] animate-opacity-scale">
-        {data.length === 0 ? (
-          <div className="w-full text-center mt-10">There is no data</div>
-        ) : (
-          data?.map((track: any, index: number) => {
-            return (
-              <CardWrapper key={index} className="h-[54px]">
-                <SignalInfoCard
-                  title={"@" + track?.twitter_username}
-                  subTitle={track?.twitter_description}
-                  id={track?.id}
-                  username={track.twitter_username}
-                >
-                  <Avatar>
-                    <AvatarImage src={track?.twitter_profile_image_url} />
-                    <AvatarFallback>Host</AvatarFallback>
-                  </Avatar>
-                </SignalInfoCard>
-              </CardWrapper>
-            );
-          })
-        )}
-        {/* <CardWrapper className="h-[54px]">
-          <SignalInfoCard
-            title="@CryptoGuru"
-            subTitle="Detailed insights on market trends and forecasts"
-            id={1}
-            username="CryptoGuru111"s
-          >
-            <Avatar>
-              <AvatarImage src={"/images/signal-avatar-1.png"} />
-              <AvatarFallback>Host</AvatarFallback>
-            </Avatar>
-          </SignalInfoCard>
-        </CardWrapper>
-        <CardWrapper className="h-[54px]">
-          <SignalInfoCard
-            title="@CryptoGuru"
-            subTitle="Analysis of emerging tokens and market movements"
-            id={2}
-            username="CryptoGuru"
-          >
-            <Avatar>
-              <AvatarImage src={"/images/signal-avatar-1.png"} />
-              <AvatarFallback>Host</AvatarFallback>
-            </Avatar>
-          </SignalInfoCard>
-        </CardWrapper> */}
+
+      <div className="relative w-full  animate-opacity-scale">
+        <Input
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+          }}
+          className="bg-transparent border border-[#AAAAAA] h-11 text-border text-sm placeholder:text-[#AAAAAA] placeholder:text-sm"
+          placeholder="Enter a twitter @name to search"
+        />
+        <GoSearch className="absolute right-3 top-3 w-5 h-5 text-border" />
+      </div>
+      <div className="flex w-full flex-col justify-center items-center gap-4 mt-4  animate-opacity-scale">
+        <div className="w-full flex flex-col gap-[6px] animate-opacity-scale">
+          {data.length === 0 ? (
+            <div className="w-full text-center mt-10">There is no data</div>
+          ) : (
+            data?.map((track: any, index: number) => {
+              return (
+                <CardWrapper key={index} className="h-[54px]">
+                  <SignalInfoCard
+                    title={"@" + track?.twitter_username}
+                    subTitle={track?.twitter_description}
+                    id={track?.id}
+                    username={track.twitter_username}
+                  >
+                    <Avatar>
+                      <AvatarImage src={track?.twitter_profile_image_url} />
+                      <AvatarFallback>Host</AvatarFallback>
+                    </Avatar>
+                  </SignalInfoCard>
+                </CardWrapper>
+              );
+            })
+          )}
+        </div>
       </div>
     </div>
   );

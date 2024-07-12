@@ -1,17 +1,23 @@
-const API_KEY = "O4g7hFBP.Wa2y8ftUqjjk0BAaPPFwxCqCPVGcK7ls";
-const BASE_URL = "https://api-eave-dev.azurewebsites.net/api";
+// /src/libs/dataFetches.ts
+import { cookies } from "next/headers";
 
-async function fetchUserData(telegramEntityId: number) {
-  const url = `${BASE_URL}/accounts/get_by_telegram_entity_id/?telegram_entity_id=${telegramEntityId}`;
+export async function fetchUserData() {
+  const cookieStore = cookies();
+  const telegramEntityId = cookieStore.get("telegram_entity_id")?.value;
 
+  if (!telegramEntityId) {
+    throw new Error("Telegram entity ID not found in cookies");
+  }
+
+  const url = `https://api-eave-dev.azurewebsites.net/api/accounts/get_by_telegram_entity_id/?telegram_entity_id=${telegramEntityId}`;
   const apiResponse = await fetch(url, {
     method: "GET",
     headers: {
-      "x-api-key": API_KEY,
+      "x-api-key": "O4g7hFBP.Wa2y8ftUqjjk0BAaPPFwxCqCPVGcK7ls",
     },
   });
 
-  if (!apiResponse.ok) {
+  if (apiResponse.status !== 200) {
     throw new Error("Failed to fetch data from external API");
   }
 
@@ -20,17 +26,23 @@ async function fetchUserData(telegramEntityId: number) {
   return result;
 }
 
-async function fetchTrackingData(telegramEntityId: number) {
-  const url = `${BASE_URL}/accounts/${telegramEntityId}/follows/`;
+export async function fetchTrackingData() {
+  const cookieStore = cookies();
+  const telegramEntityId = cookieStore.get("telegram_entity_id")?.value;
 
+  if (!telegramEntityId) {
+    throw new Error("Telegram entity ID not found in cookies");
+  }
+
+  const url = `https://api-eave-dev.azurewebsites.net/api/accounts/${telegramEntityId}/follows/`;
   const apiResponse = await fetch(url, {
     method: "GET",
     headers: {
-      "x-api-key": API_KEY,
+      "x-api-key": "O4g7hFBP.Wa2y8ftUqjjk0BAaPPFwxCqCPVGcK7ls",
     },
   });
 
-  if (!apiResponse.ok) {
+  if (apiResponse.status !== 200) {
     throw new Error("Failed to fetch data from external API");
   }
 
@@ -39,23 +51,23 @@ async function fetchTrackingData(telegramEntityId: number) {
   return result;
 }
 
-async function fetchHostsData(
+export async function fetchHostsData(
   offset: number,
   limit: number,
   twitter_username: string | null
 ) {
-  const url = `${BASE_URL}/creators/?offset=${offset}&limit=${limit}${
-    twitter_username ? `&search=${twitter_username}` : ""
-  }`;
-
+  const url =
+    `https://api-eave-dev.azurewebsites.net/api/creators/?offset=${offset}&limit=${limit}` +
+    (twitter_username ? `&search=${twitter_username}` : "");
+  
   const apiResponse = await fetch(url, {
     method: "GET",
     headers: {
-      "x-api-key": API_KEY,
+      "x-api-key": "O4g7hFBP.Wa2y8ftUqjjk0BAaPPFwxCqCPVGcK7ls",
     },
   });
 
-  if (!apiResponse.ok) {
+  if (apiResponse.status !== 200) {
     throw new Error("Failed to fetch data from external API");
   }
 
@@ -63,13 +75,13 @@ async function fetchHostsData(
   return result;
 }
 
-async function fetchLiveSpaces(telegramEntityId: number) {
-  const url = `${BASE_URL}/spaces/?state=live`;
+export async function fetchLiveSpaces() {
+  const url = `https://api-eave-dev.azurewebsites.net/api/spaces/?state=live`;
 
   const apiResponse = await fetch(url, {
     method: "GET",
     headers: {
-      "x-api-key": API_KEY,
+      "x-api-key": "O4g7hFBP.Wa2y8ftUqjjk0BAaPPFwxCqCPVGcK7ls",
     },
   });
 
@@ -81,33 +93,45 @@ async function fetchLiveSpaces(telegramEntityId: number) {
   return result.results;
 }
 
-async function fetchCreatorSpaces(creatorUsername: string): Promise<any> {
-  const url = `${BASE_URL}/spaces/?creator_username=${creatorUsername}&limit=5`;
-
-  const apiResponse = await fetch(url, {
-    method: "GET",
-    headers: {
-      "x-api-key": API_KEY,
-    },
-  });
-
-  if (!apiResponse.ok) {
-    throw new Error("Failed to fetch data from external API");
-  }
-
-  const result = await apiResponse.json();
-  return result.results;
-}
-
-async function fetchCreatorData(
-  telegramEntityId: number,
+export async function fetchCreatorSpaces(
   creatorUsername: string
 ): Promise<any> {
-  const url = `${BASE_URL}/creators/?entity_id=${telegramEntityId}&twitter_username=${creatorUsername}`;
+  const cookieStore = cookies();
+  const telegramEntityId = cookieStore.get("telegram_entity_id")?.value;
+
+  if (!telegramEntityId) {
+    throw new Error("Telegram entity ID not found in cookies");
+  }
+  const url = `https://api-eave-dev.azurewebsites.net/api/spaces/?creator_username=${creatorUsername}&limit=5`;
+
   const apiResponse = await fetch(url, {
     method: "GET",
     headers: {
-      "x-api-key": API_KEY,
+      "x-api-key": "O4g7hFBP.Wa2y8ftUqjjk0BAaPPFwxCqCPVGcK7ls",
+    },
+  });
+
+  if (!apiResponse.ok) {
+    throw new Error("Failed to fetch data from external API");
+  }
+
+  const result = await apiResponse.json();
+  return result.results;
+}
+
+export async function fetchCreatorData(creatorUsername: string): Promise<any> {
+  const cookieStore = cookies();
+  const telegramEntityId = cookieStore.get("telegram_entity_id")?.value;
+
+  if (!telegramEntityId) {
+    throw new Error("Telegram entity ID not found in cookies");
+  }
+
+  const url = `https://api-eave-dev.azurewebsites.net/api/creators/?entity_id=${telegramEntityId}&twitter_username=${creatorUsername}`;
+  const apiResponse = await fetch(url, {
+    method: "GET",
+    headers: {
+      "x-api-key": "O4g7hFBP.Wa2y8ftUqjjk0BAaPPFwxCqCPVGcK7ls",
     },
   });
 
@@ -126,12 +150,3 @@ async function fetchCreatorData(
     // throw new Error('No data found for the specified creatorUsername');
   }
 }
-
-export {
-  fetchUserData,
-  fetchTrackingData,
-  fetchHostsData,
-  fetchLiveSpaces,
-  fetchCreatorSpaces,
-  fetchCreatorData,
-};

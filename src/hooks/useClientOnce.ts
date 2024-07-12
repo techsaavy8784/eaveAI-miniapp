@@ -1,3 +1,5 @@
+"use client"
+
 import { useRef } from 'react';
 
 export function useClientOnce(fn: () => void): void {
