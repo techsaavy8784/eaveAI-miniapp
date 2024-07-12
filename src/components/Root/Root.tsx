@@ -12,6 +12,8 @@ import {
   bindThemeParamsCSSVars,
   bindViewportCSSVars,
   postEvent,
+  isSSR,
+  retrieveLaunchParams,
 } from "@telegram-apps/sdk-react";
 import { TonConnectUIProvider } from "@tonconnect/ui-react";
 import { AppRoot } from "@telegram-apps/telegram-ui";
@@ -107,9 +109,18 @@ function RootInner({ children }: PropsWithChildren) {
     useTelegramMock();
   }
 
-  const debug = useLaunchParams().startParam === "debug";
+  // const debug = useLaunchParams().startParam === "debug";
+  // const manifestUrl = useMemo(() => {
+  //   return new URL("tonconnect-manifest.json", window.location.href).toString();
+  // }, []);
+
+  const debug = useMemo(() => {
+    return isSSR() ? false : retrieveLaunchParams().startParam === "debug";
+  }, []);
   const manifestUrl = useMemo(() => {
-    return new URL("tonconnect-manifest.json", window.location.href).toString();
+    return isSSR()
+      ? ""
+      : new URL("tonconnect-manifest.json", window.location.href).toString();
   }, []);
 
   useEffect(() => {
@@ -127,13 +138,28 @@ function RootInner({ children }: PropsWithChildren) {
   );
 }
 
+const ErrorBoundaryError: React.FC<{ error: unknown }> = ({ error }) => (
+  <div>
+    <p>An unhandled error occurred:</p>
+    <blockquote>
+      <code>
+        {error instanceof Error
+          ? error.message
+          : typeof error === "string"
+          ? error
+          : JSON.stringify(error)}
+      </code>
+    </blockquote>
+  </div>
+);
+
 export function Root(props: PropsWithChildren) {
   // Unfortunately, Telegram Mini Apps does not allow us to use all features of the Server Side
   // Rendering. That's why we are showing loader on the server side.
   const didMount = useDidMount();
 
   return didMount ? (
-    <ErrorBoundary fallback={ErrorPage}>
+    <ErrorBoundary fallback={ErrorBoundaryError}>
       <RootInner {...props} />
     </ErrorBoundary>
   ) : (
