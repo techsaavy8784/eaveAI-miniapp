@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import {
   AlertDialog,
@@ -42,14 +44,14 @@ const FollowButton = ({ hostId, is_following }: FollowButtonProps) => {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
+      <AlertDialogTrigger disabled={isLoading}>
         <div className="flex flex-1 w-8 h-8 justify-center items-center rounded-full transition-all active:bg-[#787878] cursor-pointer">
           {isLoading ? (
-            <PiDotsThreeOutlineFill className="w-4 h-47 text-white" />
+            <PiDotsThreeOutlineFill className="w-5 h-5 text-white" />
           ) : isFollowing ? (
-            <SlUserUnfollow className="w-4 h-47 text-white" />
+            <SlUserUnfollow className="w-5 h-5 text-white" />
           ) : (
-            <SlUserFollowing className="w-4 h-47 text-white" />
+            <SlUserFollowing className="w-5 h-5 text-white" />
           )}
         </div>
       </AlertDialogTrigger>
@@ -62,7 +64,7 @@ const FollowButton = ({ hostId, is_following }: FollowButtonProps) => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleFollow}>
+          <AlertDialogAction className="bg-[#787878] " onClick={handleFollow}>
             {isFollowing ? "Unfollow" : "Follow"}
           </AlertDialogAction>
         </AlertDialogFooter>
