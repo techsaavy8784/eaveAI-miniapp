@@ -89,11 +89,15 @@ function App(props: PropsWithChildren) {
       setTelegramCookies(telegram_entity_id, telegram_username);
     }
   }, [lp]);
-
+  console.log(lp.platform);
   return (
     <AppRoot
       appearance={miniApp.isDark ? "dark" : "light"}
-      platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
+      platform={
+        ["macos", "ios", "android", "tdesktop"].includes(lp.platform)
+          ? "ios"
+          : "base"
+      }
     >
       <div id="wrap">
         <div id="content">{props.children}</div>
@@ -156,21 +160,15 @@ const ErrorBoundaryError: React.FC<{ error: unknown }> = ({ error }) => (
 export function Root(props: PropsWithChildren) {
   // Unfortunately, Telegram Mini Apps does not allow us to use all features of the Server Side
   // Rendering. That's why we are showing loader on the server side.
-  // const didMount = useDidMount();
+  const didMount = useDidMount();
 
-  // return didMount ? (
-  //   <ErrorBoundary fallback={ErrorBoundaryError}>
-  //     <RootInner {...props} />
-  //   </ErrorBoundary>
-  // ) : (
-  //   <div className="fixed w-full h-screen flex justify-center items-center top-0 left-0 z-50 bg-[#171717]">
-  //     <FadeLoader color="#6174ec" height={20} width={6} />
-  //   </div>
-  // );
-
-  return (
+  return didMount ? (
     <ErrorBoundary fallback={ErrorBoundaryError}>
       <RootInner {...props} />
     </ErrorBoundary>
+  ) : (
+    <div className="fixed w-full h-screen flex justify-center items-center top-0 left-0 z-50 bg-[#171717]">
+      <FadeLoader color="#6174ec" height={20} width={6} />
+    </div>
   );
 }

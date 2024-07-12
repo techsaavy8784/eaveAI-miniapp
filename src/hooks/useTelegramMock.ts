@@ -1,5 +1,3 @@
-"use client"
-
 import { useClientOnce } from '@/hooks/useClientOnce';
 import { mockTelegramEnv, parseInitData, retrieveLaunchParams } from '@telegram-apps/sdk-react';
 
