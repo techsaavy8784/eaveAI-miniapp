@@ -156,15 +156,21 @@ const ErrorBoundaryError: React.FC<{ error: unknown }> = ({ error }) => (
 export function Root(props: PropsWithChildren) {
   // Unfortunately, Telegram Mini Apps does not allow us to use all features of the Server Side
   // Rendering. That's why we are showing loader on the server side.
-  const didMount = useDidMount();
+  // const didMount = useDidMount();
 
-  return didMount ? (
+  // return didMount ? (
+  //   <ErrorBoundary fallback={ErrorBoundaryError}>
+  //     <RootInner {...props} />
+  //   </ErrorBoundary>
+  // ) : (
+  //   <div className="fixed w-full h-screen flex justify-center items-center top-0 left-0 z-50 bg-[#171717]">
+  //     <FadeLoader color="#6174ec" height={20} width={6} />
+  //   </div>
+  // );
+
+  return (
     <ErrorBoundary fallback={ErrorBoundaryError}>
       <RootInner {...props} />
     </ErrorBoundary>
-  ) : (
-    <div className="fixed w-full h-screen flex justify-center items-center top-0 left-0 z-50 bg-[#171717]">
-      <FadeLoader color="#6174ec" height={20} width={6} />
-    </div>
   );
 }
