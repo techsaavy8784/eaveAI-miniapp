@@ -1,9 +1,10 @@
 // /src/libs/dataFetches.ts
-import { cookies } from "next/headers";
+// import { cookies } from "next/headers";
 
 export async function fetchUserData() {
-  const cookieStore = cookies();
-  const telegramEntityId = cookieStore.get("telegram_entity_id")?.value;
+  // const cookieStore = cookies();
+  // const telegramEntityId = cookieStore.get("telegram_entity_id")?.value;
+  const telegramEntityId = "6177077760";
 
   if (!telegramEntityId) {
     throw new Error("Telegram entity ID not found in cookies");
@@ -27,12 +28,13 @@ export async function fetchUserData() {
 }
 
 export async function fetchTrackingData() {
-  const cookieStore = cookies();
-  const telegramEntityId = cookieStore.get("telegram_entity_id")?.value;
+  // const cookieStore = cookies();
+  // const telegramEntityId = cookieStore.get("telegram_entity_id")?.value;
 
-  if (!telegramEntityId) {
-    throw new Error("Telegram entity ID not found in cookies");
-  }
+  // if (!telegramEntityId) {
+  //   throw new Error("Telegram entity ID not found in cookies");
+  // }
+  const telegramEntityId = "6177077760";
 
   const url = `https://api-eave-dev.azurewebsites.net/api/accounts/${telegramEntityId}/follows/`;
   const apiResponse = await fetch(url, {
@@ -59,7 +61,7 @@ export async function fetchHostsData(
   const url =
     `https://api-eave-dev.azurewebsites.net/api/creators/?offset=${offset}&limit=${limit}` +
     (twitter_username ? `&search=${twitter_username}` : "");
-  
+
   const apiResponse = await fetch(url, {
     method: "GET",
     headers: {
@@ -96,12 +98,12 @@ export async function fetchLiveSpaces() {
 export async function fetchCreatorSpaces(
   creatorUsername: string
 ): Promise<any> {
-  const cookieStore = cookies();
-  const telegramEntityId = cookieStore.get("telegram_entity_id")?.value;
+  // const cookieStore = cookies();
+  // const telegramEntityId = cookieStore.get("telegram_entity_id")?.value;
 
-  if (!telegramEntityId) {
-    throw new Error("Telegram entity ID not found in cookies");
-  }
+  // if (!telegramEntityId) {
+  //   throw new Error("Telegram entity ID not found in cookies");
+  // }
   const url = `https://api-eave-dev.azurewebsites.net/api/spaces/?creator_username=${creatorUsername}&limit=5`;
 
   const apiResponse = await fetch(url, {
@@ -120,12 +122,14 @@ export async function fetchCreatorSpaces(
 }
 
 export async function fetchCreatorData(creatorUsername: string): Promise<any> {
-  const cookieStore = cookies();
-  const telegramEntityId = cookieStore.get("telegram_entity_id")?.value;
+  // const cookieStore = cookies();
+  // const telegramEntityId = cookieStore.get("telegram_entity_id")?.value;
 
-  if (!telegramEntityId) {
-    throw new Error("Telegram entity ID not found in cookies");
-  }
+  // if (!telegramEntityId) {
+  //   throw new Error("Telegram entity ID not found in cookies");
+  // }
+
+  const telegramEntityId = "6177077760";
 
   const url = `https://api-eave-dev.azurewebsites.net/api/creators/?entity_id=${telegramEntityId}&twitter_username=${creatorUsername}`;
   const apiResponse = await fetch(url, {
