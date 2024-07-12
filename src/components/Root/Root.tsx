@@ -89,12 +89,12 @@ function App(props: PropsWithChildren) {
       setTelegramCookies(telegram_entity_id, telegram_username);
     }
   }, [lp]);
-  console.log(lp.platform);
+
   return (
     <AppRoot
       appearance={miniApp.isDark ? "dark" : "light"}
       platform={
-        ["macos", "ios", "android", "tdesktop"].includes(lp.platform)
+        ["macos", "ios", "android", "tdesktop", "web"].includes(lp.platform)
           ? "ios"
           : "base"
       }
