@@ -48,7 +48,7 @@ function App(props: PropsWithChildren) {
   const themeParams = useThemeParams();
   const viewport = useViewport();
   const pathname = usePathname();
-  // const isMain = isMainPage(pathname);
+  const isMain = isMainPage(pathname);
 
   useEffect(() => {
     return bindMiniAppCSSVars(miniApp, themeParams);
@@ -66,19 +66,19 @@ function App(props: PropsWithChildren) {
     viewport?.expand();
   }
 
-  // useEffect(() => {
-  //   postEvent("web_app_expand");
-  //   postEvent("web_app_setup_main_button", { is_visible: false });
+  useEffect(() => {
+    postEvent("web_app_expand");
+    postEvent("web_app_setup_main_button", { is_visible: false });
 
-  //   // Ensure elements exist before manipulating them
-  //   document.body.classList.add("mobile-body");
-  //   const wrap = document.getElementById("wrap");
-  //   const content = document.getElementById("content");
-  //   if (wrap && content) {
-  //     wrap.classList.add("mobile-wrap");
-  //     content.classList.add("mobile-content");
-  //   }
-  // }, [isMain]);
+    // Ensure elements exist before manipulating them
+    document.body.classList.add("mobile-body");
+    const wrap = document.getElementById("wrap");
+    const content = document.getElementById("content");
+    if (wrap && content) {
+      wrap.classList.add("mobile-wrap");
+      content.classList.add("mobile-content");
+    }
+  }, [isMain]);
 
   useEffect(() => {
     const telegram_entity_id = lp.initData?.user?.id;
@@ -93,7 +93,9 @@ function App(props: PropsWithChildren) {
       appearance={miniApp.isDark ? "dark" : "light"}
       platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
     >
-      {props.children}
+      <div id="wrap">
+        <div id="content">{props.children}</div>
+      </div>
     </AppRoot>
   );
 }
@@ -110,12 +112,11 @@ function RootInner({ children }: PropsWithChildren) {
     return new URL("tonconnect-manifest.json", window.location.href).toString();
   }, []);
 
-  // Enable debug mode to see all the methods sent and events received.
-  // useEffect(() => {
-  //   if (debug) {
-  //     import("eruda").then((lib) => lib.default.init());
-  //   }
-  // }, [debug]);
+  useEffect(() => {
+    if (debug) {
+      import("eruda").then((lib) => lib.default.init());
+    }
+  }, [debug]);
 
   return (
     <TonConnectUIProvider manifestUrl={manifestUrl}>
